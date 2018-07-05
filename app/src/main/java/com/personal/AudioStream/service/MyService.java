@@ -1,18 +1,15 @@
 package com.personal.AudioStream.service;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteCallbackList;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.personal.AudioStream.discover.SignInAndOutReq;
@@ -23,6 +20,8 @@ import com.personal.AudioStream.output.Decoder;
 import com.personal.AudioStream.output.Receiver;
 import com.personal.AudioStream.output.Tracker;
 import com.personal.AudioStream.util.Command;
+import com.personal.speex.IIntercomService;
+import com.personal.speex.IUserCallback;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,7 +38,7 @@ public class MyService extends Service {
     private ScheduledExecutorService discoverService = Executors.newScheduledThreadPool(1);
 
     // 创建7个线程的固定大小线程池，分别执行DiscoverServer，以及输入、输出音频
-   // 创建缓冲线程池用于录音和接收用户上线消息（录音线程可能长时间不用，应该让其超时回收）
+    // 创建缓冲线程池用于录音和接收用户上线消息（录音线程可能长时间不用，应该让其超时回收）
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 
     // 设置音频播放线程为守护线程
@@ -61,9 +60,9 @@ public class MyService extends Service {
     private Sender sender;
 
     // 音频输出
-     private Receiver receiver;
-     private Decoder decoder;
-     private Tracker tracker;
+    private Receiver receiver;
+    private Decoder decoder;
+    private Tracker tracker;
 
     public static final int DISCOVERING_SEND = 0;
     public static final int DISCOVERING_RECEIVE = 1;
@@ -83,24 +82,65 @@ public class MyService extends Service {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Log.e("MyService", "handleMessage:what== "+msg.what+"\nobj=="+(String) msg.obj);
+            Log.e("MyService", "handleMessage:what== " + msg.what + "\nobj==" + (String) msg.obj);
             if (msg.what == DISCOVERING_SEND) {
                 Log.i("Service_SEND", "发送消息");
             } else if (msg.what == DISCOVERING_RECEIVE) {
-                Log.i("Service_RECEIVE", (String) msg.obj);
+                service.findNewUser((String) msg.obj);
             } else if (msg.what == DISCOVERING_LEAVE) {
-                Log.i("Service_LEAVE", (String) msg.obj);
+                service.removeUser((String) msg.obj);
             }
         }
     }
 
+
     private Handler handler = new AudioHandler(this);
+
+
+    private RemoteCallbackList<IUserCallback> mCallbackList = new RemoteCallbackList<>();
+
+    public IIntercomService.Stub mBinder = new IIntercomService.Stub(){
+        @Override
+        public void startRecord() throws RemoteException {
+            if (!recorder.isRecording()) {
+                recorder.setRecording(true);
+                tracker.setPlaying(false);
+                threadPool.execute(recorder);
+            }
+        }
+
+        @Override
+        public void stopRecord() throws RemoteException {
+            if (recorder.isRecording()) {
+                recorder.setRecording(false);
+                tracker.setPlaying(true);
+            }
+        }
+
+        @Override
+        public void leaveGroup() throws RemoteException {
+            // 发送离线消息
+            signInAndOutReq.setCommand(Command.DISC_LEAVE);
+            threadPool.execute(signInAndOutReq);
+        }
+
+        @Override
+        public void registerCallback(IUserCallback callback) throws RemoteException {
+            mCallbackList.register(callback);
+        }
+
+        @Override
+        public void unRegisterCallback(IUserCallback callback) throws RemoteException {
+            mCallbackList.unregister(callback);
+        }
+    };
+
 
     @Override
     public void onCreate() {
         super.onCreate();
         initData();
-       // showNotification();
+        // showNotification();
     }
 
     private void initData() {
@@ -154,35 +194,49 @@ public class MyService extends Service {
         startForeground(Command.FOREGROUND_SERVICE, notification);
     }*/
 
-
-
-    public class MyBinder extends Binder implements  IMyService{
-        public MyService getMyService(){
-            return MyService.this;
-        }
-
-        @Override
-        public void startRecord() {
-            if (!recorder.isRecording()) {
-                recorder.setRecording(true);
-                tracker.setPlaying(true);
-                threadPool.execute(recorder);
+    /**
+     * 发现新的组播成员
+     *
+     * @param ipAddress IP地址
+     */
+    private void findNewUser(String ipAddress) {
+        final int size = mCallbackList.beginBroadcast();
+        for (int i = 0; i < size; i++) {
+            IUserCallback callback = mCallbackList.getBroadcastItem(i);
+            if (callback != null) {
+                try {
+                    callback.findNewUser(ipAddress);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
+        mCallbackList.finishBroadcast();
+    }
 
-        @Override
-        public void stopRecord() {
-            if (recorder.isRecording()) {
-                recorder.setRecording(false);
-                tracker.setPlaying(true);
+    /**
+     * 删除用户显示
+     *
+     * @param ipAddress IP地址
+     */
+    private void removeUser(String ipAddress) {
+        final int size = mCallbackList.beginBroadcast();
+        for (int i = 0; i < size; i++) {
+            IUserCallback callback = mCallbackList.getBroadcastItem(i);
+            if (callback != null) {
+                try {
+                    callback.removeUser(ipAddress);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
+        mCallbackList.finishBroadcast();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        MyBinder mBinder = new MyBinder();
         return mBinder;
     }
 
