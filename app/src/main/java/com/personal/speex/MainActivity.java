@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private Button stop_record_btn;
     private Button play_video_btn;
     private Button stop_video_btn;
-    private TextView show_audio_data;
 
 
     private RecyclerView localNetworkUser;
@@ -132,15 +131,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
         setContentView(R.layout.activity_audio);
-       /* start_record_btn =(Button) findViewById(R.id.start_record_btn);
-        stop_record_btn =(Button) findViewById(R.id.stop_record_btn);
-        play_video_btn =(Button) findViewById(R.id.play_video_btn);
-        stop_video_btn =(Button) findViewById(R.id.stop_video_btn);
-
-        show_audio_data =(TextView) findViewById(R.id.show_audio_data);*/
-
         initView();
         initData();
     }
@@ -166,6 +157,55 @@ public class MainActivity extends AppCompatActivity {
         // 设置当前IP地址
         currentIp = (TextView) findViewById(R.id.activity_audio_current_ip);
         currentIp.setText(IPUtil.getLocalIPAddress());
+
+
+
+        start_record_btn =(Button) findViewById(R.id.start_record_btn);
+        stop_record_btn =(Button) findViewById(R.id.stop_record_btn);
+        play_video_btn =(Button) findViewById(R.id.play_video_btn);
+        stop_video_btn =(Button) findViewById(R.id.stop_video_btn);
+
+        start_record_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (intercomService != null) {
+                    try {
+                        intercomService.startRecord();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        stop_record_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (intercomService != null) {
+                    try {
+                        intercomService.stopRecord();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        play_video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (intercomService != null) {
+                }
+            }
+        });
+
+        stop_video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (intercomService != null) {
+                }
+            }
+        });
     }
 
     /**
