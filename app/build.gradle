@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+//apply plugin: 'me.tatarka.retrolambda'
 android {
     compileSdkVersion rootProject.ext.android["compileSdkVersion"]
     buildToolsVersion rootProject.ext.android["buildToolsVersion"]
@@ -17,6 +17,7 @@ android {
         versionCode rootProject.ext.android["versionCode"]
         versionName rootProject.ext.android["versionName"]
         testInstrumentationRunner rootProject.ext.dependencies["androidJUnitRunner"]
+        multiDexEnabled true
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -26,6 +27,10 @@ android {
         }
     }
     buildTypes {
+        debug{
+            jniDebuggable true
+            jniDebuggable = true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -49,6 +54,13 @@ buildscript {
         classpath 'me.tatarka:gradle-retrolambda:3.6.0'
     }
 }
+/*allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+}*/
 
 
 dependencies {
@@ -64,4 +76,12 @@ dependencies {
     compile rootProject.ext.dependencies["autolayout"]
     compile rootProject.ext.dependencies["butterknife"]
     compile rootProject.ext.dependencies["androideventbus"]
+    compile rootProject.ext.dependencies["rxandroid2"]
+    compile rootProject.ext.dependencies["rxjava2"]
+    compile rootProject.ext.dependencies["rxlifecycle2"]
+    compile rootProject.ext.dependencies["rxlifecycle2-android"]
+    compile rootProject.ext.dependencies["rxlifecycle2-components"]
+    compile rootProject.ext.dependencies["rxcache2"]
+    compile rootProject.ext.dependencies["rxpermissions2"]
+    compile rootProject.ext.dependencies["rxerrorhandler2"]
 }

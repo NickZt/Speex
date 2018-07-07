@@ -54,9 +54,9 @@ public class Recorder extends JobHandler {
             short[] rawData = new short[inAudioBufferSize];
             audioRecord.read(rawData, 0, inAudioBufferSize);
             AudioData audioData = new AudioData(rawData);
-           MessageQueue.getInstance(MessageQueue.ENCODER_DATA_QUEUE).put(audioData);
+            MessageQueue.getInstance(MessageQueue.ENCODER_DATA_QUEUE).put(audioData);
             Log.e("audio", "recorder: "+audioData.getRawData().length);
-            Log.e("audio", "recorder===\n "+ Arrays.toString(audioData.getRawData()));
+            //Log.e("audio", "recorder===\n "+ Arrays.toString(audioData.getRawData()));
             //MessageQueue.getInstance(MessageQueue.TRACKER_DATA_QUEUE).put(audioData);
         }
     }

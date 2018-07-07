@@ -1,7 +1,11 @@
 package com.personal.AudioStream.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -10,6 +14,7 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.personal.AudioStream.discover.SignInAndOutReq;
@@ -22,6 +27,8 @@ import com.personal.AudioStream.output.Tracker;
 import com.personal.AudioStream.util.Command;
 import com.personal.speex.IIntercomService;
 import com.personal.speex.IUserCallback;
+import com.personal.speex.MainActivity;
+import com.personal.speex.R;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -104,7 +111,7 @@ public class MyService extends Service {
         public void startRecord() throws RemoteException {
             if (!recorder.isRecording()) {
                 recorder.setRecording(true);
-                tracker.setPlaying(false);
+                tracker.setPlaying(true);
                 threadPool.execute(recorder);
             }
         }
@@ -140,7 +147,7 @@ public class MyService extends Service {
     public void onCreate() {
         super.onCreate();
         initData();
-        // showNotification();
+         showNotification();
     }
 
     private void initData() {
@@ -168,7 +175,7 @@ public class MyService extends Service {
         // 开启音频输入、输出
         threadPool.execute(encoder);
         threadPool.execute(sender);
-       /* threadPool.execute(receiver);*/
+        threadPool.execute(receiver);
         threadPool.execute(decoder);
         threadPool.execute(tracker);
     }
@@ -176,23 +183,23 @@ public class MyService extends Service {
     /**
      * 前台Service
      */
-  /*  private void showNotification() {
-        Intent notificationIntent = new Intent(this, AudioActivity.class);
+    private void showNotification() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
 //        notificationIntent.setAction(Command.MAIN_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.base_app_icon);
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
                 .setContentTitle("对讲机")
                 .setTicker("对讲机")
                 .setContentText("正在使用对讲机")
-                .setSmallIcon(R.drawable.base_app_icon)
-                .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                .setSmallIcon(R.mipmap.ic_launcher)
+               // .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
                 .setContentIntent(pendingIntent)
                 .setOngoing(true).build();
 
         startForeground(Command.FOREGROUND_SERVICE, notification);
-    }*/
+    }
 
     /**
      * 发现新的组播成员

@@ -22,7 +22,7 @@ public class SpeexUtil {
      * 6 : 11kpbs (artifacts usually only noticeable with headphones)
      * 8 : 15kbps (artifacts not usually noticeable)
      */
-    public static final int DEFAULT_COMPRESSION = 4;
+    public static final int DEFAULT_COMPRESSION = 5;
     private static volatile SpeexUtil INSTANCE = null;
 
     private SpeexUtil() {

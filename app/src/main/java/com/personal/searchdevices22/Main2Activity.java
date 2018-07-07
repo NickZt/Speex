@@ -59,7 +59,7 @@ public class Main2Activity extends AppCompatActivity {
         }
 
 
-        private void searchDevices_broadcast() {
+        public void searchDevices_broadcast() {
             new Search22Thread() {
                 @Override
                 public void onSearchStart() {

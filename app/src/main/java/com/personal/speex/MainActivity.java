@@ -1,5 +1,6 @@
 package com.personal.speex;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -30,12 +31,16 @@ import com.personal.AudioStream.users.IntercomAdapter;
 import com.personal.AudioStream.users.IntercomUserBean;
 import com.personal.AudioStream.users.VerticalSpaceItemDecoration;
 import com.personal.AudioStream.util.IPUtil;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
     private Button start_record_btn;
@@ -128,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         handler.sendMessage(msg);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +143,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        //权限申请
+        /*RxPermissions rxPermissions = new RxPermissions(this);
+
+        rxPermissions.requestEach(Manifest.permission.CALL_PHONE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.PROCESS_OUTGOING_CALLS,
+                Manifest.permission.SEND_SMS
+        ).subscribe(new Consumer<Permission>() {
+            @Override
+            public void accept(Permission permission) throws Exception {
+                if (permission.granted) {
+                    Toast.makeText(MainActivity.this,"权限获取成功",Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(MainActivity.this,"权限获取失败",Toast.LENGTH_LONG).show();
+                }
+            }
+        });*/
         // 初始化AudioManager配置
         initAudioManager();
         // 启动Service
@@ -171,8 +195,10 @@ public class MainActivity extends AppCompatActivity {
                 if (intercomService != null) {
                     try {
                         intercomService.startRecord();
+                        Log.e("keydown", "start_record_btn: " );
                     } catch (RemoteException e) {
                         e.printStackTrace();
+                        Log.e("keydown", "start_record_btn: " +e.getMessage());
                     }
                 }
             }
@@ -184,8 +210,10 @@ public class MainActivity extends AppCompatActivity {
                 if (intercomService != null) {
                     try {
                         intercomService.stopRecord();
+                        Log.e("keydown", "stop_record_btn: " );
                     } catch (RemoteException e) {
                         e.printStackTrace();
+                        Log.e("keydown", "stop_record_btn: " +e.getMessage());
                     }
                 }
             }
@@ -231,12 +259,13 @@ public class MainActivity extends AppCompatActivity {
         currentIp.setText(IPUtil.getLocalIPAddress());
     }
 
-    @Override
+    /*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_F2 ||
                 keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
             try {
                 intercomService.startRecord();
+                Log.e("keydown", "onKeyDown: " );
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -257,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyUp(keyCode, event);
-    }
+    }*/
 
     @Override
     public void onBackPressed() {

@@ -24,10 +24,10 @@ public class Multicast {
         try {
             inetAddress = InetAddress.getByName(Constants.MULTI_BROADCAST_IP);
             // 创建组播网络地址，并判断
-            /*if (!inetAddress.isMulticastAddress()) {
-                //pushMsgToMain(UDP_HANDLER_MESSAGE_TOAST, "IP地址不是组播地址（224.0.0.0~239.255.255.255）");
-                return;
-            }*/
+//            if (!inetAddress.isMulticastAddress()) {
+//                //pushMsgToMain(UDP_HANDLER_MESSAGE_TOAST, "IP地址不是组播地址（224.0.0.0~239.255.255.255）");
+//                return;
+//            }
             multicastSocket = new MulticastSocket(Constants.MULTI_BROADCAST_PORT);
             multicastSocket.setLoopbackMode(true);
             //multicastSocket.setSoTimeout();

@@ -26,9 +26,9 @@ public class AudioDataUtil {
      */
     public static byte[] raw2spx(short[] audioData) {
 
-       /* // 原始数据中包含的整数个encFrameSize
+        // 原始数据中包含的整数个encFrameSize
         int nSamples = audioData.length / encFrameSize;
-        byte[] encodedData = new byte[((audioData.length - 1) / encFrameSize + 1) * encodedFrameSize];
+        byte[] encodedData = new byte[((audioData.length-1) / encFrameSize + 1) * encodedFrameSize];
         short[] rawByte;
         // 将原数据转换成spx压缩的文件
         byte[] encodingData = new byte[encFrameSize];
@@ -42,17 +42,20 @@ public class AudioDataUtil {
             readTotal += encodeSize;
         }
         Log.e("audio", "raw2spx1: "+readTotal+"=="+audioData.length+"=="+(nSamples * encFrameSize));
-        rawByte = new short[encFrameSize];
-        System.arraycopy(audioData, nSamples * encFrameSize, rawByte, 0, audioData.length - nSamples * encFrameSize);
-        int encodeSize = SpeexUtil.init().encode(rawByte, 0, encodingData, rawByte.length);
-        System.arraycopy(encodingData, 0, encodedData, readTotal, encodeSize);
-        Log.e("audio", "raw2spx2: "+readTotal+encodeSize +"=="+encodedData.length);
-        return encodedData;*/
+        if (audioData.length - nSamples * encFrameSize>0) {
+            rawByte = new short[encFrameSize];
+            System.arraycopy(audioData, nSamples * encFrameSize, rawByte, 0, audioData.length - nSamples * encFrameSize);
+            int encodeSize = SpeexUtil.init().encode(rawByte, 0, encodingData, rawByte.length);
+            System.arraycopy(encodingData, 0, encodedData, readTotal, encodeSize);
+        }
+
+        Log.e("audio", "raw2spx2: "+readTotal +"=="+encodedData.length);
+        return encodedData;
 
         //byte[] encodedData = new byte[audioData.length / encFrameSize * encodedFrameSize];
-        byte[] encodedData = new byte[((audioData.length - 1) / encFrameSize + 1) * encodedFrameSize];
+        /*byte[] encodedData = new byte[((audioData.length - 1) / encFrameSize + 1) * encodedFrameSize];
         SpeexUtil.init().encode(audioData, 0,encodedData, audioData.length);
-        return encodedData;
+        return encodedData;*/
     }
 
     /**

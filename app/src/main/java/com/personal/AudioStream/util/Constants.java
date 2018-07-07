@@ -12,7 +12,7 @@ import android.media.MediaRecorder;
 public class Constants {
 
     // 组播端口号
-    public static final int MULTI_BROADCAST_PORT = 9999;
+    public static final int MULTI_BROADCAST_PORT = 10001;
     // 组播地址
    // public static final String MULTI_BROADCAST_IP = "224.9.9.9";
     public static final String MULTI_BROADCAST_IP = "255.255.255.255";
