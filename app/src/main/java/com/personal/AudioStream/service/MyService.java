@@ -6,25 +6,25 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.personal.AudioStream.discover.SignInAndOutReq;
 import com.personal.AudioStream.input.Encoder;
+import com.personal.AudioStream.input.MultiSender;
 import com.personal.AudioStream.input.Recorder;
-import com.personal.AudioStream.input.Sender;
+import com.personal.AudioStream.input.UniSender;
 import com.personal.AudioStream.output.Decoder;
-import com.personal.AudioStream.output.Receiver;
+import com.personal.AudioStream.output.MultiReceiver;
+import com.personal.AudioStream.output.UniReceiver;
 import com.personal.AudioStream.output.Tracker;
-import com.personal.AudioStream.util.Command;
+import com.personal.AudioStream.constants.PCommand;
 import com.personal.speex.IIntercomService;
 import com.personal.speex.IUserCallback;
 import com.personal.speex.MainActivity;
@@ -33,7 +33,6 @@ import com.personal.speex.R;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,32 +47,22 @@ public class MyService extends Service {
     // 创建缓冲线程池用于录音和接收用户上线消息（录音线程可能长时间不用，应该让其超时回收）
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    // 设置音频播放线程为守护线程
-    private ExecutorService outputService = Executors.newSingleThreadExecutor(new ThreadFactory() {
-        @Override
-        public Thread newThread(@NonNull Runnable r) {
-            Thread thread = Executors.defaultThreadFactory().newThread(r);
-            thread.setDaemon(true);
-            return thread;
-        }
-    });
-
     // 加入、退出组播组消息
     private SignInAndOutReq signInAndOutReq;
 
     // 音频输入
     private Recorder recorder;
     private Encoder encoder;
-    private Sender sender;
+    private UniSender uniSender;
+    private MultiSender multiSender;
 
     // 音频输出
-    private Receiver receiver;
+    private UniReceiver uniReceiver;
+    private MultiReceiver multiReceiver;
     private Decoder decoder;
     private Tracker tracker;
 
-    public static final int DISCOVERING_SEND = 0;
-    public static final int DISCOVERING_RECEIVE = 1;
-    public static final int DISCOVERING_LEAVE = 2;
+
 
     /**
      * Service与Runnable的通信
@@ -90,36 +79,59 @@ public class MyService extends Service {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Log.e("MyService", "handleMessage:what== " + msg.what + "\nobj==" + (String) msg.obj);
-            if (msg.what == DISCOVERING_SEND) {
+            if (msg.what == PCommand.DISCOVERING_SEND) {
                 Log.i("Service_SEND", "发送消息");
-            } else if (msg.what == DISCOVERING_RECEIVE) {
+            } else if (msg.what == PCommand.DISCOVERING_RECEIVE) {
                 service.findNewUser((String) msg.obj);
-            } else if (msg.what == DISCOVERING_LEAVE) {
+            } else if (msg.what == PCommand.DISCOVERING_LEAVE) {
                 service.removeUser((String) msg.obj);
-            }
+            }/*else if (msg.what == PCommand.UNI_FLAG_PER_LEVEL){
+                service.encoder.setSEND_COMMAND(PCommand.UNI_FLAG_PER_LEVEL);
+            }else if (msg.what == PCommand.MULTI_FLAG_GROUP_LEVEL){
+
+            }else if (msg.what == PCommand.MULTI_FLAG_ALL_LEVEL){
+
+            }*/
         }
     }
 
 
-    private Handler handler = new AudioHandler(this);
+    private AudioHandler handler = new AudioHandler(this);
 
 
     private RemoteCallbackList<IUserCallback> mCallbackList = new RemoteCallbackList<>();
 
     public IIntercomService.Stub mBinder = new IIntercomService.Stub(){
         @Override
-        public void startRecord() throws RemoteException {
-            if (!recorder.isRecording()) {
-                recorder.setRecording(true);
-                tracker.setPlaying(true);
-                threadPool.execute(recorder);
+        public void startRecord(int level) throws RemoteException {
+            if (PCommand.UNI_FLAG_PER_LEVEL == level) {
+                if (!recorder.isRecording()) {
+                    encoder.setSEND_COMMAND(PCommand.UNI_FLAG_PER_LEVEL);
+                    threadPool.execute(recorder);
+                    recorder.onStart();
+                    tracker.setPlaying(false);
+                }
+            }else if (PCommand.MULTI_FLAG_GROUP_LEVEL == level){
+                if (!recorder.isRecording()) {
+                    encoder.setSEND_COMMAND(PCommand.MULTI_FLAG_GROUP_LEVEL);
+                    threadPool.execute(recorder);
+                    recorder.onStart();
+                    tracker.setPlaying(false);
+                }
+            }else if (PCommand.MULTI_FLAG_ALL_LEVEL == level){
+                if (!recorder.isRecording()) {
+                    encoder.setSEND_COMMAND(PCommand.MULTI_FLAG_ALL_LEVEL);
+                    threadPool.execute(recorder);
+                    recorder.onStart();
+                    tracker.setPlaying(false);
+                }
             }
         }
 
         @Override
-        public void stopRecord() throws RemoteException {
+        public void stopRecord(int level) throws RemoteException {
             if (recorder.isRecording()) {
-                recorder.setRecording(false);
+                recorder.onStop();
                 tracker.setPlaying(true);
             }
         }
@@ -127,7 +139,7 @@ public class MyService extends Service {
         @Override
         public void leaveGroup() throws RemoteException {
             // 发送离线消息
-            signInAndOutReq.setCommand(Command.DISC_LEAVE);
+            signInAndOutReq.setCommand(PCommand.DISC_LEAVE);
             threadPool.execute(signInAndOutReq);
         }
 
@@ -147,13 +159,13 @@ public class MyService extends Service {
     public void onCreate() {
         super.onCreate();
         initData();
-         showNotification();
+        showNotification();
     }
 
     private void initData() {
         // 初始化探测线程
         signInAndOutReq = new SignInAndOutReq(handler);
-        signInAndOutReq.setCommand(Command.DISC_REQUEST);
+        signInAndOutReq.setCommand(PCommand.DISC_REQUEST);
         // 启动探测局域网内其余用户的线程（每分钟扫描一次）
         discoverService.scheduleAtFixedRate(signInAndOutReq, 0, 10, TimeUnit.SECONDS);
         // 初始化JobHandler
@@ -167,15 +179,19 @@ public class MyService extends Service {
         // 初始化音频输入节点
         recorder = new Recorder(handler);
         encoder = new Encoder(handler);
-        sender = new Sender(handler);
+        uniSender = new UniSender(handler);
+        multiSender = new MultiSender(handler);
         // 初始化音频输出节点
-        receiver = new Receiver(handler);
+        uniReceiver = new UniReceiver(handler);
+        multiReceiver = new MultiReceiver(handler);
         decoder = new Decoder(handler);
         tracker = new Tracker(handler);
         // 开启音频输入、输出
         threadPool.execute(encoder);
-        threadPool.execute(sender);
-        threadPool.execute(receiver);
+        threadPool.execute(uniSender);
+        threadPool.execute(multiSender);
+        threadPool.execute(multiReceiver);
+        threadPool.execute(uniReceiver);
         threadPool.execute(decoder);
         threadPool.execute(tracker);
     }
@@ -185,7 +201,7 @@ public class MyService extends Service {
      */
     private void showNotification() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
-//        notificationIntent.setAction(Command.MAIN_ACTION);
+//        notificationIntent.setAction(PCommand.MAIN_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
@@ -198,7 +214,7 @@ public class MyService extends Service {
                 .setContentIntent(pendingIntent)
                 .setOngoing(true).build();
 
-        startForeground(Command.FOREGROUND_SERVICE, notification);
+        startForeground(PCommand.FOREGROUND_SERVICE, notification);
     }
 
     /**
@@ -270,8 +286,10 @@ public class MyService extends Service {
         // 释放线程资源
         recorder.free();
         encoder.free();
-        sender.free();
-        receiver.free();
+        uniSender.free();
+        uniReceiver.free();
+        multiReceiver.free();
+        multiSender.free();
         decoder.free();
         tracker.free();
         // 释放线程池

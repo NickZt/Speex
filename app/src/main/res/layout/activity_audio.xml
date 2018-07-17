@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/start_record_btn"
-            android:text="开始录音"/>
+            android:text="单发录音"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -77,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/play_video_btn"
-            android:text="播放录音"/>
+            android:text="群发录音"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

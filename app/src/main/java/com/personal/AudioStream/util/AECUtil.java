@@ -1,15 +1,19 @@
 package com.personal.AudioStream.util;
 
 import android.media.audiofx.AcousticEchoCanceler;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 /**
  * Created by personal on 2017/4/18.
+ * 回音消除等
  */
 
 public class AECUtil {
 
     private static AcousticEchoCanceler canceler;
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public static boolean initAEC(int audioSession) {
         if (canceler != null) {
             return false;
@@ -19,6 +23,7 @@ public class AECUtil {
         return canceler.getEnabled();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public static boolean isDeviceSupport() {
         return AcousticEchoCanceler.isAvailable();
     }

@@ -4,11 +4,10 @@ import android.os.Handler;
 import android.os.Message;
 
 
+import com.personal.AudioStream.constants.PCommand;
 import com.personal.AudioStream.job.JobHandler;
 import com.personal.AudioStream.network.Multicast;
-import com.personal.AudioStream.service.MyService;
-import com.personal.AudioStream.util.Command;
-import com.personal.AudioStream.util.Constants;
+import com.personal.AudioStream.constants.PBroadCastConfig;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -31,16 +30,16 @@ public class SignInAndOutReq extends JobHandler {
         if (command != null) {
             byte[] data = command.getBytes(Charset.forName("UTF-8"));
             DatagramPacket datagramPacket = new DatagramPacket(
-                    data, data.length, Multicast.getMulticast().getInetAddress(), Constants.MULTI_BROADCAST_PORT);
+                    data, data.length, Multicast.getMulticast().getInetAddress(), PBroadCastConfig.MULTI_BROADCAST_PORT);
             try {
-                Multicast.getMulticast().getMulticastSocket().send(datagramPacket);
+                Multicast.getMulticast().getSendMulticastSocket().send(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (command.equals(Command.DISC_REQUEST)) {
+            if (PCommand.DISC_REQUEST.equals(command)) {
                 sendMsg2MainThread();
-            } else if (command.equals(Command.DISC_LEAVE)) {
-                setCommand(Command.DISC_REQUEST);
+            } else if (PCommand.DISC_LEAVE.equals(command)) {
+                setCommand(PCommand.DISC_REQUEST);
             }
         }
     }
@@ -50,7 +49,7 @@ public class SignInAndOutReq extends JobHandler {
      */
     private void sendMsg2MainThread() {
         Message message = new Message();
-        message.what = MyService.DISCOVERING_SEND;
+        message.what = PCommand.DISCOVERING_SEND;
         handler.sendMessage(message);
     }
 }

@@ -1,6 +1,5 @@
 package com.personal.speex;
 
-import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,32 +14,21 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.personal.AudioStream.service.IMyService;
+import com.personal.AudioStream.constants.PCommand;
 import com.personal.AudioStream.service.MyService;
 import com.personal.AudioStream.users.IntercomAdapter;
 import com.personal.AudioStream.users.IntercomUserBean;
 import com.personal.AudioStream.users.VerticalSpaceItemDecoration;
 import com.personal.AudioStream.util.IPUtil;
-import com.tbruyelle.rxpermissions2.Permission;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
     private Button start_record_btn;
@@ -56,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
     private IntercomAdapter intercomAdapter;
 
     private IIntercomService intercomService;
-    private Intent intent;
 
+    /**
+     * onServiceConnected和onServiceDisconnected运行在UI线程中
+     */
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -182,8 +172,6 @@ public class MainActivity extends AppCompatActivity {
         currentIp = (TextView) findViewById(R.id.activity_audio_current_ip);
         currentIp.setText(IPUtil.getLocalIPAddress());
 
-
-
         start_record_btn =(Button) findViewById(R.id.start_record_btn);
         stop_record_btn =(Button) findViewById(R.id.stop_record_btn);
         play_video_btn =(Button) findViewById(R.id.play_video_btn);
@@ -194,7 +182,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (intercomService != null) {
                     try {
-                        intercomService.startRecord();
+                        intercomService.startRecord(PCommand.MULTI_FLAG_ALL_LEVEL);
+
                         Log.e("keydown", "start_record_btn: " );
                     } catch (RemoteException e) {
                         e.printStackTrace();
@@ -209,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (intercomService != null) {
                     try {
-                        intercomService.stopRecord();
+                        intercomService.stopRecord(PCommand.MULTI_FLAG_ALL_LEVEL);
                         Log.e("keydown", "stop_record_btn: " );
                     } catch (RemoteException e) {
                         e.printStackTrace();

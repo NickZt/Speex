@@ -4,14 +4,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-
+import com.personal.AudioStream.constants.PBroadCastConfig;
+import com.personal.AudioStream.constants.PCommand;
 import com.personal.AudioStream.data.AudioData;
 import com.personal.AudioStream.data.MessageQueue;
 import com.personal.AudioStream.job.JobHandler;
 import com.personal.AudioStream.network.Multicast;
-import com.personal.AudioStream.service.MyService;
-import com.personal.AudioStream.util.Command;
-import com.personal.AudioStream.util.Constants;
 import com.personal.AudioStream.util.IPUtil;
 
 import java.io.IOException;
@@ -23,9 +21,9 @@ import java.util.Arrays;
  * Created by yanghao1 on 2017/4/12.
  */
 
-public class Receiver extends JobHandler {
+public class MultiReceiver extends JobHandler {
 
-    public Receiver(Handler handler) {
+    public MultiReceiver(Handler handler) {
         super(handler);
     }
 
@@ -37,14 +35,14 @@ public class Receiver extends JobHandler {
             DatagramPacket datagramPacket = new DatagramPacket(receivedData, receivedData.length);
             try {
                 // 接收数据报文
-                Multicast.getMulticast().getMulticastSocket().receive(datagramPacket);
+                Multicast.getMulticast().getReceiveMulticastSocket().receive(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             // 判断数据报文类型，并做相应处理
-            if (datagramPacket.getLength() == Command.DISC_REQUEST.getBytes(Charset.forName("UTF-8")).length ||
-                    datagramPacket.getLength() == Command.DISC_LEAVE.getBytes(Charset.forName("UTF-8")).length ||
-                    datagramPacket.getLength() == Command.DISC_RESPONSE.getBytes(Charset.forName("UTF-8")).length) {
+            if (datagramPacket.getLength() == PCommand.DISC_REQUEST.getBytes(Charset.forName("UTF-8")).length ||
+                    datagramPacket.getLength() == PCommand.DISC_LEAVE.getBytes(Charset.forName("UTF-8")).length ||
+                    datagramPacket.getLength() == PCommand.DISC_RESPONSE.getBytes(Charset.forName("UTF-8")).length) {
                 handleCommandData(datagramPacket);
             } else {
                 handleAudioData(datagramPacket);
@@ -59,26 +57,26 @@ public class Receiver extends JobHandler {
      */
     private void handleCommandData(DatagramPacket packet) {
         String content = new String(packet.getData()).trim();
-        if (content.equals(Command.DISC_REQUEST) &&
+        if (PCommand.DISC_REQUEST.equals(content) &&
                 !packet.getAddress().toString().equals("/" + IPUtil.getLocalIPAddress())) {
-            byte[] feedback = Command.DISC_RESPONSE.getBytes(Charset.forName("UTF-8"));
+            byte[] feedback = PCommand.DISC_RESPONSE.getBytes(Charset.forName("UTF-8"));
             // 发送数据
             DatagramPacket sendPacket = new DatagramPacket(feedback, feedback.length,
-                    packet.getAddress(), Constants.MULTI_BROADCAST_PORT);
+                    packet.getAddress(), PBroadCastConfig.MULTI_BROADCAST_PORT);
             try {
-                Multicast.getMulticast().getMulticastSocket().send(sendPacket);
+                Multicast.getMulticast().getSendMulticastSocket().send(sendPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             // 发送Handler消息
-            sendMsg2MainThread(packet.getAddress().toString(), MyService.DISCOVERING_RECEIVE);
-        } else if (content.equals(Command.DISC_RESPONSE) &&
+            sendMsg2MainThread(packet.getAddress().toString(), PCommand.DISCOVERING_RECEIVE);
+        } else if (PCommand.DISC_RESPONSE.equals(content) &&
                 !packet.getAddress().toString().equals("/" + IPUtil.getLocalIPAddress())) {
             // 发送Handler消息
-            sendMsg2MainThread(packet.getAddress().toString(), MyService.DISCOVERING_RECEIVE);
-        } else if (content.equals(Command.DISC_LEAVE) &&
+            sendMsg2MainThread(packet.getAddress().toString(), PCommand.DISCOVERING_RECEIVE);
+        } else if (PCommand.DISC_LEAVE.equals(content) &&
                 !packet.getAddress().toString().equals("/" + IPUtil.getLocalIPAddress())) {
-            sendMsg2MainThread(packet.getAddress().toString(), MyService.DISCOVERING_LEAVE);
+            sendMsg2MainThread(packet.getAddress().toString(), PCommand.DISCOVERING_LEAVE);
         }
     }
 

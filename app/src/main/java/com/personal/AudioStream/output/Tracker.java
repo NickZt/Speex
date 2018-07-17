@@ -7,7 +7,7 @@ import android.util.Log;
 import com.personal.AudioStream.data.AudioData;
 import com.personal.AudioStream.data.MessageQueue;
 import com.personal.AudioStream.job.JobHandler;
-import com.personal.AudioStream.util.Constants;
+import com.personal.AudioStream.constants.PAudioConfig;
 
 import java.util.Arrays;
 
@@ -29,11 +29,11 @@ public class Tracker extends JobHandler {
         super(handler);
         // 获取音频数据缓冲段大小
         outAudioBufferSize = AudioTrack.getMinBufferSize(
-                Constants.sampleRateInHz, Constants.outputChannelConfig, Constants.audioFormat);
+                PAudioConfig.sampleRateInHz, PAudioConfig.outputChannelConfig, PAudioConfig.audioFormat);
         // 初始化音频播放
-        audioTrack = new AudioTrack(Constants.streamType,
-                Constants.sampleRateInHz, Constants.outputChannelConfig, Constants.audioFormat,
-                outAudioBufferSize, Constants.trackMode);
+        audioTrack = new AudioTrack(PAudioConfig.streamType,
+                PAudioConfig.sampleRateInHz, PAudioConfig.outputChannelConfig, PAudioConfig.audioFormat,
+                outAudioBufferSize, PAudioConfig.trackMode);
         audioTrack.play();
     }
 

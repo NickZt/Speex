@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class MessageQueue {
 
-    private static MessageQueue messageQueue1, messageQueue2, messageQueue3, messageQueue4;
+    private static MessageQueue messageQueue1, messageQueue2, messageQueue3, messageQueue4,messageQueue5;
 
     private BlockingQueue<AudioData> audioDataQueue = null;
 
@@ -23,14 +23,15 @@ public class MessageQueue {
     }
 
     @Retention(SOURCE)
-    @IntDef({ENCODER_DATA_QUEUE, SENDER_DATA_QUEUE, DECODER_DATA_QUEUE, TRACKER_DATA_QUEUE})
+    @IntDef({ENCODER_DATA_QUEUE, UNI_SENDER_DATA_QUEUE,MULTI_SENDER_DATA_QUEUE, DECODER_DATA_QUEUE, TRACKER_DATA_QUEUE})
     public @interface DataQueueType {
     }
 
     public static final int ENCODER_DATA_QUEUE = 0;
-    public static final int SENDER_DATA_QUEUE = 1;
-    public static final int DECODER_DATA_QUEUE = 2;
-    public static final int TRACKER_DATA_QUEUE = 3;
+    public static final int UNI_SENDER_DATA_QUEUE = 1;
+    public static final int MULTI_SENDER_DATA_QUEUE = 2;
+    public static final int DECODER_DATA_QUEUE = 3;
+    public static final int TRACKER_DATA_QUEUE = 4;
 
     public static MessageQueue getInstance(@DataQueueType int type) {
         switch (type) {
@@ -39,21 +40,26 @@ public class MessageQueue {
                     messageQueue1 = new MessageQueue();
                 }
                 return messageQueue1;
-            case SENDER_DATA_QUEUE:
+            case UNI_SENDER_DATA_QUEUE:
                 if (messageQueue2 == null) {
                     messageQueue2 = new MessageQueue();
                 }
                 return messageQueue2;
-            case DECODER_DATA_QUEUE:
+            case MULTI_SENDER_DATA_QUEUE:
                 if (messageQueue3 == null) {
                     messageQueue3 = new MessageQueue();
                 }
                 return messageQueue3;
-            case TRACKER_DATA_QUEUE:
+            case DECODER_DATA_QUEUE:
                 if (messageQueue4 == null) {
                     messageQueue4 = new MessageQueue();
                 }
                 return messageQueue4;
+            case TRACKER_DATA_QUEUE:
+                if (messageQueue5 == null) {
+                    messageQueue5 = new MessageQueue();
+                }
+                return messageQueue5;
             default:
                 return new MessageQueue();
         }

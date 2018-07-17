@@ -10,7 +10,7 @@ import com.personal.speex.SpeexUtil;
  */
 
 public class AudioDataUtil {
-    /*设置了每帧处理160个short型数据，压缩比为5，每帧输出为28个byte型数据。Speex压缩模式特征如下：
+    /*当采样率为8000Hz时，设置了每帧处理160个short型数据，压缩比为5，每帧输出为28个byte型数据。Speex压缩模式特征如下：
     原文综合考虑音频质量、压缩比和算法复杂度，最后选择了Mode 5。*/
 
     /*The frame size in hardcoded for this sample code but it doesn't have to be*/
