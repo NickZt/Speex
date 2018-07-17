@@ -1,8 +1,13 @@
 package com.personal.AudioStream.input;
 
 import android.media.AudioRecord;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.AutomaticGainControl;
+import android.media.audiofx.NoiseSuppressor;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -74,12 +79,17 @@ public class Recorder extends JobHandler {
 
     //录音读写的大小
     private int readSize;
+    private AcousticEchoCanceler aec;
+    private AutomaticGainControl agc;
+    private NoiseSuppressor nc;
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public Recorder(Handler handler) {
         super(handler);
         onCreate();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public Recorder(Handler handler, PAudioSettedBean settedBean) {
         super(handler);
         onCreate();
@@ -89,6 +99,7 @@ public class Recorder extends JobHandler {
     /**
      * 默认初始化AudioRecord等操作
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void onCreate() {
         setInAudioBufferSize(0);
         setAudioRecord(null);
@@ -117,6 +128,7 @@ public class Recorder extends JobHandler {
      * @param inAudioBufferSize 使用对应AudioRecord的配置获取音频缓冲大小
      * @return 1表示初始化成功；0表示初始化失败
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public int onCreate(PAudioCallBack audioCallBack, AudioRecord audioRecord, int inAudioBufferSize) {
         if (PAudioStatus.STATUS_START == audioStatus) {
             return 0;
@@ -320,11 +332,16 @@ public class Recorder extends JobHandler {
      * 设置audiorecord的初始化配置
      * @param record 外部传入的audiorecord，如果为null则使用默认获取
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void setAudioRecord(AudioRecord record) {
         if (record == null) {
             // 初始化音频录制
-            audioRecord = new AudioRecord(PAudioConfig.audioSource,
-                    PAudioConfig.sampleRateInHz, PAudioConfig.inputChannelConfig, PAudioConfig.audioFormat, inAudioBufferSize);
+            audioRecord = new AudioRecord(
+                    PAudioConfig.audioSource,
+                    PAudioConfig.sampleRateInHz,
+                    PAudioConfig.inputChannelConfig,
+                    PAudioConfig.audioFormat,
+                    inAudioBufferSize);
         } else {
             if (audioRecord != null) {
                 try {
@@ -337,6 +354,29 @@ public class Recorder extends JobHandler {
             }
             audioRecord = record;
         }
+        //声学回声消除器 AcousticEchoCanceler 消除了从远程捕捉到音频信号上的信号的作用
+        if (AcousticEchoCanceler.isAvailable()) {
+            aec = AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
+            if (aec != null) {
+                aec.setEnabled(true);
+            }
+        }
+
+        //自动增益控制 AutomaticGainControl 自动恢复正常捕获的信号输出
+        if (AutomaticGainControl.isAvailable()) {
+            agc = AutomaticGainControl.create(audioRecord.getAudioSessionId());
+            if (agc != null) {
+                agc.setEnabled(true);
+            }
+        }
+
+        //噪声抑制器 NoiseSuppressor 可以消除被捕获信号的背景噪音
+        if (NoiseSuppressor.isAvailable()) {
+            nc = NoiseSuppressor.create(audioRecord.getAudioSessionId());
+            if (nc != null) {
+                nc.setEnabled(true);
+            }
+        }
     }
 
     /**
@@ -348,7 +388,9 @@ public class Recorder extends JobHandler {
         if (bufferSize <= 0) {
             // 获取音频数据缓冲段大小
             inAudioBufferSize = AudioRecord.getMinBufferSize(
-                    PAudioConfig.sampleRateInHz, PAudioConfig.inputChannelConfig, PAudioConfig.audioFormat);
+                    PAudioConfig.sampleRateInHz,
+                    PAudioConfig.inputChannelConfig,
+                    PAudioConfig.audioFormat);
         } else {
             inAudioBufferSize = bufferSize;
         }
