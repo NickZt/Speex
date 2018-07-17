@@ -29,11 +29,21 @@ public class Tracker extends JobHandler {
         super(handler);
         // 获取音频数据缓冲段大小
         outAudioBufferSize = AudioTrack.getMinBufferSize(
-                PAudioConfig.sampleRateInHz, PAudioConfig.outputChannelConfig, PAudioConfig.audioFormat);
+                PAudioConfig.sampleRateInHz,
+                PAudioConfig.outputChannelConfig,
+                PAudioConfig.audioFormat);
         // 初始化音频播放
-        audioTrack = new AudioTrack(PAudioConfig.streamType,
-                PAudioConfig.sampleRateInHz, PAudioConfig.outputChannelConfig, PAudioConfig.audioFormat,
-                outAudioBufferSize, PAudioConfig.trackMode);
+        audioTrack = new AudioTrack(
+                PAudioConfig.streamType,
+                PAudioConfig.sampleRateInHz,
+                PAudioConfig.outputChannelConfig,
+                PAudioConfig.audioFormat,
+                outAudioBufferSize,
+                PAudioConfig.trackMode);
+        //在音轨上设置指定的左和右输出值。
+        audioTrack.setStereoVolume(
+                AudioTrack.getMaxVolume(),
+                AudioTrack.getMaxVolume());
         audioTrack.play();
     }
 
