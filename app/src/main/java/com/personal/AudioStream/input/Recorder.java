@@ -167,8 +167,8 @@ public class Recorder extends JobHandler {
 
         if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_STOPPED) {
             try {
-                audioRecord.startRecording();
                 isRecording = true;
+                audioRecord.startRecording();
             } catch (Exception ex) {
                 audioStatus = PAudioStatus.STATUS_ERROR;
                 isRecording = false;
