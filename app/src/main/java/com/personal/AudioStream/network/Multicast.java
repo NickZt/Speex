@@ -1,11 +1,17 @@
 package com.personal.AudioStream.network;
 
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
+import android.util.Log;
+
+import com.personal.App;
 import com.personal.AudioStream.constants.PBroadCastConfig;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.NetworkInterface;
 
 /**
  * 多播：
@@ -30,27 +36,33 @@ public class Multicast {
     private InetAddress inetAddress;
 
     private static final Multicast multicast = new Multicast();
+    private WifiManager.MulticastLock multicastLock;
 
     private Multicast() {
         try {
+            openMultiSocket();
             inetAddress = InetAddress.getByName(PBroadCastConfig.MULTI_BROADCAST_IP);
             // 创建组播网络地址，并判断·
-//            if (!inetAddress.isMulticastAddress()) {
-//                //pushMsgToMain(UDP_HANDLER_MESSAGE_TOAST, "IP地址不是组播地址（224.0.0.0~239.255.255.255）");
-//                return;
-//            }
+            if (!inetAddress.isMulticastAddress()) {
+                //pushMsgToMain(UDP_HANDLER_MESSAGE_TOAST, "IP地址不是组播地址（224.0.0.0~239.255.255.255）");
+                return;
+            }
+            boolean held = multicastLock.isHeld();
+            Log.e("audio", "handleMulticast: "+held );
             multicastSendSocket = new MulticastSocket(PBroadCastConfig.MULTI_BROADCAST_PORT);
-            multicastSendSocket.setLoopbackMode(true);
-            //multicastSendSocket.setSoTimeout();
+            //multicastSendSocket.setLoopbackMode(true);
+//            multicastSendSocket.setSoTimeout();
+            multicastSendSocket.setNetworkInterface(NetworkInterface.getByName("wlan0"));
             multicastSendSocket.joinGroup(inetAddress);//加入多播组，发送方和接受方处于同一组时，接收方可抓取多播报文信息
-            multicastSendSocket.setTimeToLive(4);//设定TTL
-
+            // multicastSendSocket.setTimeToLive(4);//设定TTL
 
             multicastReceiveSocket = new MulticastSocket(PBroadCastConfig.MULTI_BROADCAST_PORT);
-            multicastReceiveSocket.setLoopbackMode(true);
+            //multicastReceiveSocket.setLoopbackMode(true);
             //multicastSendSocket.setSoTimeout();
+            multicastReceiveSocket.setNetworkInterface(NetworkInterface.getByName("wlan0"));
             multicastReceiveSocket.joinGroup(inetAddress);//加入多播组，发送方和接受方处于同一组时，接收方可抓取多播报文信息
-            multicastReceiveSocket.setTimeToLive(4);//设定TTL
+            // multicastReceiveSocket.setTimeToLive(4);//设定TTL
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,6 +83,18 @@ public class Multicast {
         return inetAddress;
     }
 
+    public WifiManager.MulticastLock getMulticastLock() {
+        return multicastLock;
+    }
+
+    private void openMultiSocket(){
+        if (multicastLock == null) {
+            WifiManager wifiManager = (WifiManager) App.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            multicastLock = wifiManager.createMulticastLock("multicast.test");
+            multicastLock.acquire();
+        }
+    }
+
     public void free() {
         if (multicastSendSocket != null) {
             try {
@@ -81,7 +105,6 @@ public class Multicast {
                 e.printStackTrace();
             }
         }
-
         if (multicastReceiveSocket != null) {
             try {
                 multicastReceiveSocket.leaveGroup(inetAddress);
@@ -90,6 +113,10 @@ public class Multicast {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        if (multicastLock.isHeld()) {
+            multicastLock.release();
+            multicastLock = null;
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.personal.AudioStream.users;
+package com.personal.AudioStream.group.users;
 
 import android.content.Context;
 import android.content.res.TypedArray;

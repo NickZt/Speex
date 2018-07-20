@@ -19,8 +19,10 @@ public class PBroadCastConfig {
     // 组播端口号
     public static final int MULTI_BROADCAST_PORT = 10001;
     // 组播IP地址（224.0.0.0~239.255.255.255）
-    // public static final String MULTI_BROADCAST_IP = "224.9.9.9";
-    public static final String MULTI_BROADCAST_IP = "239.255.255.255";
+     //public static final String MULTI_BROADCAST_IP = "224.9.9.9";
+    //public static final String MULTI_BROADCAST_IP = "239.255.255.255";
+//    public static final String MULTI_BROADCAST_IP = "239.0.255.255";
+    public static final String MULTI_BROADCAST_IP = "224.0.0.251";
 
     // 单播端口号
     public static final int UNICAST_PORT = 10000;

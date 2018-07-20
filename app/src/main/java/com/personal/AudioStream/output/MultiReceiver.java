@@ -36,6 +36,7 @@ public class MultiReceiver extends JobHandler {
             try {
                 // 接收数据报文
                 Multicast.getMulticast().getReceiveMulticastSocket().receive(datagramPacket);
+                Log.e("audio", "handlerun: "+datagramPacket.getLength() );
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -57,6 +58,7 @@ public class MultiReceiver extends JobHandler {
      */
     private void handleCommandData(DatagramPacket packet) {
         String content = new String(packet.getData()).trim();
+        Log.e("audio", "handleCommandData: "+"收到消息"+content );
         if (PCommand.DISC_REQUEST.equals(content) &&
                 !packet.getAddress().toString().equals("/" + IPUtil.getLocalIPAddress())) {
             byte[] feedback = PCommand.DISC_RESPONSE.getBytes(Charset.forName("UTF-8"));

@@ -2,6 +2,7 @@ package com.personal.AudioStream.discover;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 
 import com.personal.AudioStream.constants.PCommand;
@@ -28,9 +29,10 @@ public class SignInAndOutReq extends JobHandler {
     @Override
     public void run() {
         if (command != null) {
-            byte[] data = command.getBytes(Charset.forName("UTF-8"));
+            byte[] data = (command).getBytes(Charset.forName("UTF-8"));
             DatagramPacket datagramPacket = new DatagramPacket(
                     data, data.length, Multicast.getMulticast().getInetAddress(), PBroadCastConfig.MULTI_BROADCAST_PORT);
+            Log.e("audio", "run: "+command +"==="+Multicast.getMulticast().getInetAddress());
             try {
                 Multicast.getMulticast().getSendMulticastSocket().send(datagramPacket);
             } catch (IOException e) {

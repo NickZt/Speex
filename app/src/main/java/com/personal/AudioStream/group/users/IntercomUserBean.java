@@ -1,4 +1,4 @@
-package com.personal.AudioStream.users;
+package com.personal.AudioStream.group.users;
 
 
 public class IntercomUserBean {

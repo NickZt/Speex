@@ -1,4 +1,4 @@
-package com.personal.AudioStream.users;
+package com.personal.AudioStream.group.users;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

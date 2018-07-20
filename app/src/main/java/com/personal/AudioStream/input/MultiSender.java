@@ -35,7 +35,7 @@ public class MultiSender extends JobHandler {
         AudioData audioData;
         while ((audioData = MessageQueue.getInstance(MessageQueue.MULTI_SENDER_DATA_QUEUE).take()) != null) {
             // TODO: 2018/6/29 播放用测试
-          //  MessageQueue.getInstance(MessageQueue.DECODER_DATA_QUEUE).put(audioData);
+            //MessageQueue.getInstance(MessageQueue.DECODER_DATA_QUEUE).put(audioData);
             Log.e("audio", "multisender: "+audioData.getEncodedData().length);
             // TODO: 2018/6/29 播放用测试
 

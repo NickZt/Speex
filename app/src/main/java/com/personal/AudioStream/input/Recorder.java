@@ -169,15 +169,17 @@ public class Recorder extends JobHandler {
             try {
                 isRecording = true;
                 audioRecord.startRecording();
+                Log.e("audio", "onStart: "+isRecording );
             } catch (Exception ex) {
                 audioStatus = PAudioStatus.STATUS_ERROR;
                 isRecording = false;
+                Log.e("audio", "onStart: "+ex.getMessage() );
                 ex.printStackTrace();
             }
         }else {
-            audioStatus = PAudioStatus.STATUS_READY;
+           /* audioStatus = PAudioStatus.STATUS_READY;
             isRecording = false;
-            throw new IllegalArgumentException("Audio启动状态异常：" +audioRecord.getRecordingState());
+            throw new IllegalArgumentException("Audio启动状态异常：" +audioRecord.getRecordingState());*/
         }
     }
 
@@ -192,8 +194,9 @@ public class Recorder extends JobHandler {
      * 调用该方法：停止录音,并保存文件
      */
     public void onStop() {
-        if (audioStatus != PAudioStatus.STATUS_START || audioStatus != PAudioStatus.STATUS_ERROR
-                || audioStatus != PAudioStatus.STATUS_FREE) {
+        if (!(audioStatus == PAudioStatus.STATUS_START
+                || audioStatus == PAudioStatus.STATUS_ERROR
+                || audioStatus == PAudioStatus.STATUS_FREE)) {
             return;
         }
         /*//todo 如果有暂停功能需要下面的判断，替代上面的内容
@@ -282,6 +285,7 @@ public class Recorder extends JobHandler {
 
     @Override
     public void run() {
+        Log.e("audio", "run222: "+isRecording );
         while (isRecording) {
             /*try {
                 onResume();
@@ -305,9 +309,10 @@ public class Recorder extends JobHandler {
                     recordToFile(rawData);
                 }*/
             } else {
-                isRecording = false;
-                audioStatus = PAudioStatus.STATUS_ERROR;
-                onStop();
+                Log.e(TAG, "runelse: "+readSize);
+                /*isRecording = false;
+                audioStatus = PAudioStatus.STATUS_ERROR;*/
+               /* onStop();*/
             }
             //MessageQueue.getInstance(MessageQueue.TRACKER_DATA_QUEUE).put(audioData);//测试用，可删
         }

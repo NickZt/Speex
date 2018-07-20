@@ -6,12 +6,14 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -27,7 +29,7 @@ import com.personal.AudioStream.output.Tracker;
 import com.personal.AudioStream.constants.PCommand;
 import com.personal.speex.IIntercomService;
 import com.personal.speex.IUserCallback;
-import com.personal.speex.MainActivity;
+import com.personal.AudioStream.activity.MainActivity;
 import com.personal.speex.R;
 
 import java.util.concurrent.ExecutorService;
@@ -80,8 +82,9 @@ public class MyService extends Service {
             super.handleMessage(msg);
             Log.e("MyService", "handleMessage:what== " + msg.what + "\nobj==" + (String) msg.obj);
             if (msg.what == PCommand.DISCOVERING_SEND) {
-                Log.i("Service_SEND", "发送消息");
+                Log.e("audio", "发送消息");
             } else if (msg.what == PCommand.DISCOVERING_RECEIVE) {
+                Log.e("audio", "接收消息");
                 service.findNewUser((String) msg.obj);
             } else if (msg.what == PCommand.DISCOVERING_LEAVE) {
                 service.removeUser((String) msg.obj);
@@ -121,19 +124,23 @@ public class MyService extends Service {
             }else if (PCommand.MULTI_FLAG_ALL_LEVEL == level){
                 if (!recorder.isRecording()) {
                     encoder.setSEND_COMMAND(PCommand.MULTI_FLAG_ALL_LEVEL);
-                    threadPool.execute(recorder);
+                    Log.e("audio", "startRecord1111: "+recorder.isRecording() );
                     recorder.onStart();
-                    tracker.setPlaying(false);
+                    Log.e("audio", "startRecord2222: "+recorder.isRecording() );
+                    threadPool.execute(recorder);
+                    Log.e("audio", "startRecord3333: "+recorder.isRecording() );
+                    tracker.setPlaying(true);
                 }
             }
         }
 
         @Override
         public void stopRecord(int level) throws RemoteException {
+            Log.e("audio", "startRecord2: "+recorder.isRecording() );
             if (recorder.isRecording()) {
                 recorder.onStop();
-                tracker.setPlaying(true);
             }
+            tracker.setPlaying(true);
         }
 
         @Override
@@ -155,6 +162,7 @@ public class MyService extends Service {
     };
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onCreate() {
         super.onCreate();
@@ -162,6 +170,7 @@ public class MyService extends Service {
         showNotification();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void initData() {
         // 初始化探测线程
         signInAndOutReq = new SignInAndOutReq(handler);
@@ -175,6 +184,7 @@ public class MyService extends Service {
     /**
      * 初始化JobHandler
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void initJobHandler() {
         // 初始化音频输入节点
         recorder = new Recorder(handler);
@@ -182,7 +192,7 @@ public class MyService extends Service {
         uniSender = new UniSender(handler);
         multiSender = new MultiSender(handler);
         // 初始化音频输出节点
-        uniReceiver = new UniReceiver(handler);
+        //uniReceiver = new UniReceiver(handler);
         multiReceiver = new MultiReceiver(handler);
         decoder = new Decoder(handler);
         tracker = new Tracker(handler);
@@ -191,7 +201,7 @@ public class MyService extends Service {
         threadPool.execute(uniSender);
         threadPool.execute(multiSender);
         threadPool.execute(multiReceiver);
-        threadPool.execute(uniReceiver);
+       // threadPool.execute(uniReceiver);
         threadPool.execute(decoder);
         threadPool.execute(tracker);
     }

@@ -32,7 +32,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="HardcodedDebugMode">
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.personal.AudioStream.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,6 +46,7 @@
                     <category android:name="android.intent.category.LAUNCHER" />
                 </intent-filter>
         </receiver>
+        <activity android:name="com.personal.AudioStream.group.TallBackActivity"></activity>
     </application>
 
 </manifest>

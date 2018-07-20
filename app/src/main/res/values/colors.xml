@@ -3,4 +3,21 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--标题栏颜色-->
+    <color name="title_bar">#535353</color>
+    <!--背景 灰-->
+    <color name="background_gray">#EEEEEE</color>
+    <color name="bg_login">#586882</color>
+
+    <!--字体颜色-->
+    <color name="text_title_white">#fff</color>
+    <color name="text_title_black">#000</color>
+    <color name="text_title_red">#f00</color>
+    <color name="text_code_bg">#BFBFBF</color>
+
+    <!--圆角框相关颜色-->
+    <color name="border_bg_gray">#c1c1c1</color>
+    <color name="border_bg_white">#fff</color>
+    <color name="border_bg_orange">#f08519</color>
 </resources>

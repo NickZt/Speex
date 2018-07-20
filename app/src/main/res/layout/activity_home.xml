@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_gray">
+
+    <include
+        layout="@layout/common_title"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--更换为轮播图控件-->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_margin200"
+                android:src="@drawable/banner01"
+                android:scaleType="fitXY"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_margin30"
+                android:background="@color/border_bg_white"/>
+
+            <!--使用列表更加方便保证扩展性-->
+            <GridView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin40"
+                android:numColumns="3"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

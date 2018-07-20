@@ -1,4 +1,4 @@
-package com.personal.speex;
+package com.personal.AudioStream.activity;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,10 +21,13 @@ import android.widget.TextView;
 
 import com.personal.AudioStream.constants.PCommand;
 import com.personal.AudioStream.service.MyService;
-import com.personal.AudioStream.users.IntercomAdapter;
-import com.personal.AudioStream.users.IntercomUserBean;
-import com.personal.AudioStream.users.VerticalSpaceItemDecoration;
+import com.personal.AudioStream.group.users.IntercomAdapter;
+import com.personal.AudioStream.group.users.IntercomUserBean;
+import com.personal.AudioStream.group.users.VerticalSpaceItemDecoration;
 import com.personal.AudioStream.util.IPUtil;
+import com.personal.speex.IIntercomService;
+import com.personal.speex.IUserCallback;
+import com.personal.speex.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
