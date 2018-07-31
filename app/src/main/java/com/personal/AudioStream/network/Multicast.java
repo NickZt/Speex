@@ -49,22 +49,24 @@ public class Multicast {
             }
             boolean held = multicastLock.isHeld();
             Log.e("audio", "handleMulticast: "+held );
+
             multicastSendSocket = new MulticastSocket(PBroadCastConfig.MULTI_BROADCAST_PORT);
             //multicastSendSocket.setLoopbackMode(true);
-//            multicastSendSocket.setSoTimeout();
+            //multicastSendSocket.setSoTimeout(PBroadCastConfig.RECEIVE_TIME_OUT);
+            // multicastSendSocket.setTimeToLive(4);//设定TTL
             multicastSendSocket.setNetworkInterface(NetworkInterface.getByName("wlan0"));
             multicastSendSocket.joinGroup(inetAddress);//加入多播组，发送方和接受方处于同一组时，接收方可抓取多播报文信息
-            // multicastSendSocket.setTimeToLive(4);//设定TTL
 
             multicastReceiveSocket = new MulticastSocket(PBroadCastConfig.MULTI_BROADCAST_PORT);
             //multicastReceiveSocket.setLoopbackMode(true);
-            //multicastSendSocket.setSoTimeout();
+            //multicastReceiveSocket.setSoTimeout(PBroadCastConfig.RECEIVE_TIME_OUT);
+            // multicastReceiveSocket.setTimeToLive(4);//设定TTL
             multicastReceiveSocket.setNetworkInterface(NetworkInterface.getByName("wlan0"));
             multicastReceiveSocket.joinGroup(inetAddress);//加入多播组，发送方和接受方处于同一组时，接收方可抓取多播报文信息
-            // multicastReceiveSocket.setTimeToLive(4);//设定TTL
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            Log.e("audio", "Multicast: "+e.getMessage());
         }
     }
 
@@ -87,6 +89,9 @@ public class Multicast {
         return multicastLock;
     }
 
+    /**
+     * 部分机型必须开启多播锁才能接收到多播信息
+     */
     private void openMultiSocket(){
         if (multicastLock == null) {
             WifiManager wifiManager = (WifiManager) App.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);

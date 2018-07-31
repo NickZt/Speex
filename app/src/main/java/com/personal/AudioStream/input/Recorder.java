@@ -297,7 +297,7 @@ public class Recorder extends JobHandler {
             readSize = audioRecord.read(rawData, 0, inAudioBufferSize);
             Log.e("audio", "recorder: readSize" +readSize
                     +"\ninAudioBufferSize=="+inAudioBufferSize);
-            if (readSize > 0) {
+            if (readSize >= 0) {
                 AudioData audioData = new AudioData(rawData);
                 MessageQueue.getInstance(MessageQueue.ENCODER_DATA_QUEUE).put(audioData);
                 if (audioCallBack != null && isRecording) {
@@ -408,6 +408,7 @@ public class Recorder extends JobHandler {
             frameSize += (PAudioConfig.FRAME_COUNT - frameSize % PAudioConfig.FRAME_COUNT);
             inAudioBufferSize = frameSize * PAudioConfig.bytesPerFrame;
         }
+        Log.e(TAG, "onCreate:inAudioBufferSize== " + inAudioBufferSize);
     }
 
     /**

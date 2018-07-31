@@ -8,7 +8,7 @@
     android:gravity="center">
 
     <TextView
-        android:id="@+id/tv_name_left"
+        android:id="@+id/tv_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -16,6 +16,16 @@
         android:layout_marginBottom="@dimen/activity_margin5"
         android:textSize="@dimen/activity_text_size14"
         android:textColor="#49494d"
-        tools:text="种类"/>
+        tools:text="用户名"/>
+    <TextView
+        android:id="@+id/tv_ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/activity_margin5"
+        android:layout_marginBottom="@dimen/activity_margin5"
+        android:textSize="@dimen/activity_text_size14"
+        android:textColor="#85858c"
+        tools:text="IPaddress"/>
 
 </LinearLayout>

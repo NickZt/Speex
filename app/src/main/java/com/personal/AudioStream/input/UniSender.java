@@ -11,6 +11,7 @@ import com.personal.AudioStream.network.Multicast;
 import com.personal.AudioStream.network.Unicast;
 import com.personal.AudioStream.output.Decoder;
 import com.personal.AudioStream.output.Tracker;
+import com.personal.speex.IntercomUserBean;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -26,9 +27,15 @@ public class UniSender extends JobHandler {
 
     private Decoder decoder;
     private Tracker tracker;
+    private IntercomUserBean userBean;
 
     public UniSender(Handler handler) {
         super(handler);
+    }
+
+    public UniSender(Handler handler, IntercomUserBean userBean) {
+        super(handler);
+        this.userBean = userBean;
     }
 
     @Override

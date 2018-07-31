@@ -34,6 +34,7 @@ public class MessageQueue {
     public static final int TRACKER_DATA_QUEUE = 4;
 
     public static MessageQueue getInstance(@DataQueueType int type) {
+
         switch (type) {
             case ENCODER_DATA_QUEUE:
                 if (messageQueue1 == null) {

@@ -24,8 +24,23 @@
             android:layout_marginLeft="@dimen/activity_margin80"
             android:layout_marginRight="@dimen/activity_margin80"
             android:padding="@dimen/activity_margin8"
-            android:hint="@string/user_name"
-            android:textColorHint="@color/text_title_black"
+            android:id="@+id/group_name_et"
+            android:hint="@string/group_name"
+            android:textColorHint="@color/text_code_bg"
+            android:textSize="@dimen/activity_text_size14"
+            android:visibility="gone"
+            android:textColor="@color/text_title_black"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_radius_input"
+            android:layout_marginTop="@dimen/activity_margin30"
+            android:layout_marginLeft="@dimen/activity_margin80"
+            android:layout_marginRight="@dimen/activity_margin80"
+            android:padding="@dimen/activity_margin8"
+            android:id="@+id/group_name_tv"
+            android:hint="@string/group_name"
+            android:textColorHint="@color/text_code_bg"
             android:textSize="@dimen/activity_text_size14"
             android:textColor="@color/text_title_black"/>
         <!--显示和隐藏时用invisible和visible 不能用gone-->
@@ -41,15 +56,17 @@
             android:textColor="@color/text_title_red"
             android:visibility="invisible"/>
         <EditText
+            android:id="@+id/user_name_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border_radius_input"
             android:layout_marginLeft="@dimen/activity_margin80"
             android:layout_marginRight="@dimen/activity_margin80"
             android:padding="@dimen/activity_margin8"
-            android:hint="@string/user_password"
-            android:inputType="textPassword"
-            android:textColorHint="@color/text_title_black"
+            android:hint="@string/user_name"
+            android:maxLines="1"
+            android:maxLength="7"
+            android:textColorHint="@color/text_code_bg"
             android:textSize="@dimen/activity_text_size14"
             android:textColor="@color/text_title_black"/>
         <!--显示和隐藏时用invisible和visible 不能用gone-->
@@ -72,6 +89,7 @@
             android:drawablePadding="@dimen/activity_margin4"
             android:text="@string/user_remember_pwd"
             android:textSize="@dimen/activity_margin13"
+            android:visibility="gone"
             android:textColor="@color/border_bg_white"/>
 
         <LinearLayout
@@ -80,6 +98,7 @@
             android:layout_marginTop="@dimen/activity_margin10"
             android:layout_marginLeft="@dimen/activity_margin80"
             android:layout_marginRight="@dimen/activity_margin80"
+            android:visibility="gone"
             android:orientation="horizontal">
             <EditText
                 android:layout_width="0dp"

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.personal.speex.IntercomUserBean;
 import com.personal.speex.R;
 
 import java.util.ArrayList;
@@ -18,25 +19,24 @@ import java.util.List;
  * 邮箱：YangZL8023@163.com
  */
 
-public class TallBackContentFragment extends android.support.v4.app.Fragment {
+public class TallBackContentFragment extends BaseFragment {
 
     private static final String STATUS = "status";
 
-    private Integer mStatus = null;//对讲首页状态,默认为null 0 本地，1 其他，2 全部，3 设置
     private RecyclerView recyclerView;
 
     private TallBackRecyclerViewAdapter adapter;
 
-    private List<IntercomGroupBean> datas;
+    private List<IntercomUserBean> userBeans = new ArrayList<>();
 
     public TallBackContentFragment() {
         // Required empty public constructor
     }
 
-    public static TallBackContentFragment newInstance(int status) {
+    public static TallBackContentFragment newInstance(String titles) {
         TallBackContentFragment fragment = new TallBackContentFragment();
         Bundle args = new Bundle();
-        args.putInt(STATUS, status);
+        args.putString(STATUS, titles);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +45,7 @@ public class TallBackContentFragment extends android.support.v4.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mStatus = getArguments().getInt(STATUS, 0);
+            setmStatus(getArguments().getString(STATUS));
         }
     }
 
@@ -60,21 +60,38 @@ public class TallBackContentFragment extends android.support.v4.app.Fragment {
     }
 
     private void initData() {
-        if (datas == null) {
-            datas = new ArrayList<>();
-        }
-        for (int i = 0; i < 20; i++) {
-            datas.add(new IntercomGroupBean("分组" + mStatus + "_" + i));
-        }
-        adapter.setData(datas);
     }
 
     private void initView() {
-        adapter = new TallBackRecyclerViewAdapter(getContext());
+        adapter = new TallBackRecyclerViewAdapter(getContext(),userBeans);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
         recyclerView.setAdapter(adapter);
         //间距
         recyclerView.addItemDecoration(new SpacesItemDecoration(20));
     }
 
+    @Override
+    public void addNewUser(IntercomUserBean userBean) {
+        if (getmStatus().equals(userBean.getGroupName())
+                && !userBeans.contains(userBean)) {
+            userBeans.add(userBean);
+            adapter.notifyItemInserted(userBeans.size() - 1);
+        }
+    }
+
+    @Override
+    public String removeExistUser(IntercomUserBean userBean) {
+        if (userBeans.contains(userBean)) {
+            int position = userBeans.indexOf(userBean);
+            userBeans.remove(position);
+            userBeans.add(userBean);
+            adapter.notifyItemRemoved(position);
+            adapter.notifyItemRangeChanged(0, userBeans.size());
+        }
+        if (userBeans.size() == 0) {
+            return getmStatus();
+        }else {
+            return "非空";
+        }
+    }
 }

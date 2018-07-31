@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,16 +14,16 @@ import java.util.List;
 
 public class TabAdapter extends FragmentPagerAdapter {
 
-    private List<Fragment> fragments;
+    private List<BaseFragment> fragments = new ArrayList<>();
 
-    private List<String> titles;
+    private List<String> titles = new ArrayList<>();
 
-    public TabAdapter(FragmentManager fm, List<Fragment> fragments) {
+    public TabAdapter(FragmentManager fm, List<BaseFragment> fragments) {
         super(fm);
         this.fragments = fragments;
     }
 
-    public TabAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles) {
+    public TabAdapter(FragmentManager fm, List<BaseFragment> fragments, List<String> titles) {
         super(fm);
         this.fragments = fragments;
         this.titles = titles;
@@ -46,12 +47,9 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-
         if(this.titles != null || this.titles.size()> 0){
-
             return this.titles.get(position);
         }else {
-
             return super.getPageTitle(position);
         }
     }

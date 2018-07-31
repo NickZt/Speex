@@ -49,7 +49,6 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/activity_margin10"
         android:layout_margin="@dimen/activity_margin10"
-        android:background="@drawable/border_radius_gray"
         android:layout_gravity="right|bottom"
         android:text="全部发送"
         android:textColor="#f08519"

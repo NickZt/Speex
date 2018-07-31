@@ -3,7 +3,6 @@ package com.personal.AudioStream.group;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,17 +12,24 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.personal.AudioStream.constants.PCommand;
+import com.personal.AudioStream.constants.SPConsts;
+import com.personal.AudioStream.util.IPUtil;
+import com.personal.AudioStream.util.SPUtil;
+import com.personal.speex.IntercomUserBean;
 import com.personal.speex.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 作者：create by YangZ on 2018/7/9 09:13
  * 邮箱：YangZL8023@163.com
  */
 
-public class TallBackFragment extends android.support.v4.app.Fragment {
+public class TallBackFragment extends BaseFragment {
 
     private static final String STATUS = "status";
 
@@ -33,13 +39,16 @@ public class TallBackFragment extends android.support.v4.app.Fragment {
 
     private TallBackRecyclerViewAdapter adapter1;
 
-    private List<IntercomGroupBean> datas;
+    private List<IntercomUserBean> userDatas = new ArrayList<>();
+    private Map<String,List<IntercomUserBean>> childMap = new HashMap<String,List<IntercomUserBean>>();
 
     private LinearLayout llContent;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    private ArrayList<Fragment> mFragments;
+    private ArrayList<BaseFragment> mFragments = new ArrayList<>();
+    private List<String> titles =  new ArrayList<>();;
+    private TabAdapter mTabAdapter;
 
     public TallBackFragment() {
         // Required empty public constructor
@@ -76,62 +85,132 @@ public class TallBackFragment extends android.support.v4.app.Fragment {
     }
 
     private void initData() {
-        if (datas == null) {
-            datas = new ArrayList<>();
-        }
-        if (mStatus == 0) {
-            for (int i = 0; i < 20; i++) {
-                datas.add(new IntercomGroupBean("本地" + i));
-            }
-            adapter1.setData(datas);
-        }else if (mStatus == 2){
-            for (int i = 0; i < 20; i++) {
-                datas.add(new IntercomGroupBean("全部" + i));
-            }
-            adapter1.setData(datas);
-        } else if (mStatus == 3) {
-            for (int i = 0; i < 5; i++) {
-                datas.add(new IntercomGroupBean("设置" + i));
-            }
-            adapter1.setData(datas);
-        }
-
     }
 
     private void initView() {
-        if (mStatus == 2) {
+        if (mStatus == 0) {
             tvSend.setVisibility(View.VISIBLE);
-        } else {
-            tvSend.setVisibility(View.GONE);
-        }
-        if (mStatus == 1) {
+            tvSend.setText("组内发送");
+            tvSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tvSend.setPadding(10,10,10,10);
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(v, PCommand.MULTI_FLAG_GROUP_LEVEL,
+                                new IntercomUserBean(
+                                        IPUtil.getLocalIPAddress(),
+                                        SPUtil.getInstance().getString(SPConsts.USER_NAME),
+                                        SPUtil.getInstance().getString(SPConsts.GROUP_NAME)
+                                        ));
+                    }
+                }
+            });
+        } else if (mStatus == 2) {
+            tvSend.setVisibility(View.VISIBLE);
+            tvSend.setText("全部发送");
+            tvSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(v, PCommand.MULTI_FLAG_ALL_LEVEL, new IntercomUserBean());
+                    }
+                }
+            });
+        } else if (mStatus == 1) {
             recyclerView.setVisibility(View.GONE);
+            tvSend.setVisibility(View.GONE);
             llContent.setVisibility(View.VISIBLE);
         }else {
             recyclerView.setVisibility(View.VISIBLE);
             llContent.setVisibility(View.GONE);
         }
-        adapter1 = new TallBackRecyclerViewAdapter(getContext());
+
         if (mStatus != 1) {
+            adapter1 = new TallBackRecyclerViewAdapter(getContext(),userDatas);
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
             recyclerView.setAdapter(adapter1);
             //间距
             recyclerView.addItemDecoration(new SpacesItemDecoration(20));
+            adapter1.setOnMyClickListener(new TallBackRecyclerViewAdapter.OnMyClickListener() {
+                @Override
+                public void clickListener(View v,int status,IntercomUserBean userBean) {
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(v,status,userBean);
+                    }
+                }
+            });
         } else {
-            mFragments = new ArrayList<>();
-            List<String> titles = new ArrayList<>();
-            for (int i = 0; i < 8; i++) {
-                titles.add("其他分组" + i);
-                mFragments.add(TallBackContentFragment.newInstance(i));
-            }
-
-            TabAdapter mTabAdapter = new TabAdapter(this.getChildFragmentManager(), mFragments, titles);
+            mTabAdapter = new TabAdapter(this.getChildFragmentManager(), mFragments, titles);
             viewPager.setAdapter(mTabAdapter);//给ViewPager设置适配器
             tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来。
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);//设置TabLayout可滑动
             viewPager.setOffscreenPageLimit(5);
         }
+    }
 
+    @Override
+    public void addNewUser(IntercomUserBean userBean){
+        if (adapter1 != null) {
+            if (mStatus == 0) {
+                if (SPUtil.getInstance().getString(SPConsts.GROUP_NAME,"").equals(userBean.getGroupName())
+                        && !userDatas.contains(userBean)) {
+                    userDatas.add(userBean);
+                    adapter1.notifyItemInserted(userDatas.size() - 1);
+                }
+            }else if (mStatus == 2){
+                if (!userDatas.contains(userBean)) {
+                    userDatas.add(userBean);
+                    adapter1.notifyItemInserted(userDatas.size() - 1);
+                }
+            }else if (mStatus == 1){
+                if (!titles.contains(userBean.getGroupName())) {
+                    titles.add(userBean.getGroupName());
+                    mFragments.add(TallBackContentFragment.newInstance(userBean.getGroupName()));
+                    //Collections.sort(titles);
+                    mTabAdapter.notifyDataSetChanged();
+                }
+                for (BaseFragment mFragment : mFragments) {
+                    mFragment.addNewUser(userBean);
+                }
+            }
+        }
+    }
+
+    @Override
+    public String removeExistUser(IntercomUserBean userBean){
+        if (adapter1 != null) {
+            if (mStatus == 0) {
+                if (userDatas.contains(userBean)) {
+                    int position = userDatas.indexOf(userBean);
+                    userDatas.remove(position);
+                    userDatas.add(userBean);
+                    adapter1.notifyItemRemoved(position);
+                    adapter1.notifyItemRangeChanged(0, userDatas.size());
+                }
+            }else if (mStatus == 2){
+                if (userDatas.contains(userBean)) {
+                    int position = userDatas.indexOf(userBean);
+                    userDatas.remove(position);
+                    userDatas.add(userBean);
+                    adapter1.notifyItemRemoved(position);
+                    adapter1.notifyItemRangeChanged(0, userDatas.size());
+                }
+            }else if (mStatus == 1){
+                if (!titles.contains(userBean.getGroupName())) {
+                    titles.add(userBean.getGroupName());
+                    mFragments.add(TallBackContentFragment.newInstance(userBean.getGroupName()));
+                    //Collections.sort(titles);
+                    mTabAdapter.notifyDataSetChanged();
+                }
+                for (BaseFragment mFragment : mFragments) {
+                    String result = mFragment.removeExistUser(userBean);
+                    if (titles.contains(result)) {
+                        titles.remove(result);
+                    }
+                }
+            }
+        }
+        return ""+mStatus;
     }
 
 }

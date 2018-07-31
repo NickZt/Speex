@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.personal.AudioStream.constants.PCommand;
+import com.personal.speex.IntercomUserBean;
 import com.personal.speex.R;
 
 import java.util.ArrayList;
@@ -23,15 +25,18 @@ public class TallBackRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private Context mContext;//
     private LayoutInflater mInflater;
 
-    private List<IntercomGroupBean> data;
+    private List<IntercomUserBean> data = new ArrayList<>();
 
     private DefaultViewHolder defaultViewHolder;
 
-    public void setData(List<IntercomGroupBean> data) {
-        this.data = data;
-        if (data == null) {
+    private OnMyClickListener onMyClickListener;
+
+    public void setData(List<IntercomUserBean> data) {
+        this.data.clear();
+        this.data.addAll(data);
+        /*if (data == null) {
             this.data = new ArrayList<>();
-        }
+        }*/
         notifyDataSetChanged();
     }
 
@@ -43,6 +48,11 @@ public class TallBackRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
+    public TallBackRecyclerViewAdapter(Context mContext,List<IntercomUserBean> userBeanList) {
+        this(mContext);
+        data = userBeanList;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_name, parent, false);
@@ -52,12 +62,17 @@ public class TallBackRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         DefaultViewHolder viewHolder = (DefaultViewHolder) holder;
-        final String name = data.get(position).getName();
-        viewHolder.tv.setText(name);
+        final String userName = data.get(position).getUserName();
+        final String ipAddress = data.get(position).getIpAddress();
+        viewHolder.tv_user_name.setText(userName);
+        viewHolder.tv_ip.setText(ipAddress);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, name, Toast.LENGTH_SHORT).show();
+                if (onMyClickListener != null) {
+                    onMyClickListener.clickListener(v, PCommand.UNI_FLAG_PER_LEVEL,data.get(position));
+                }
+                Toast.makeText(mContext, userName, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -68,12 +83,21 @@ public class TallBackRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     class DefaultViewHolder extends RecyclerView.ViewHolder {
-        TextView tv;
+        TextView tv_user_name;
+        TextView tv_ip;
 
         public DefaultViewHolder(View itemView) {
             super(itemView);
-            tv = itemView.findViewById(R.id.tv_name_left);
+            tv_user_name = itemView.findViewById(R.id.tv_user_name);
+            tv_ip = itemView.findViewById(R.id.tv_ip);
         }
     }
 
+    public void setOnMyClickListener(OnMyClickListener onMyClickListener) {
+        this.onMyClickListener = onMyClickListener;
+    }
+
+    public interface OnMyClickListener {
+        void clickListener(View v,int status,IntercomUserBean userBean);
+    }
 }

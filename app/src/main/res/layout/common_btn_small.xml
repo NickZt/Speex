@@ -15,5 +15,5 @@
         android:background="@drawable/select_save_btn"
         android:textColor="@android:color/white"
         android:textSize="15sp"
-        tools:text="@string/btn_save" />
+        android:text="@string/btn_save" />
 </FrameLayout>

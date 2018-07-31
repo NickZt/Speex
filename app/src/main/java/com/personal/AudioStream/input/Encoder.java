@@ -29,9 +29,11 @@ public class Encoder extends JobHandler {
         AudioData data;
         // 在MessageQueue为空时，take方法阻塞
         while ((data = MessageQueue.getInstance(MessageQueue.ENCODER_DATA_QUEUE).take()) != null) {
+            Log.e("audio", "encoder:getRawData "+data.getRawData().length);
             data.setEncodedData(AudioDataUtil.raw2spx(data.getRawData()));
+            Log.e("audio", "encoder:getEncodedData "+data.getEncodedData().length);
             if (SEND_COMMAND == PCommand.UNI_FLAG_PER_LEVEL) {
-                MessageQueue.getInstance(MessageQueue.UNI_SENDER_DATA_QUEUE).put(data);
+                MessageQueue.getInstance(MessageQueue.MULTI_SENDER_DATA_QUEUE).put(data);
             }else  if (SEND_COMMAND == PCommand.MULTI_FLAG_GROUP_LEVEL) {
                 MessageQueue.getInstance(MessageQueue.MULTI_SENDER_DATA_QUEUE).put(data);
             }else  if (SEND_COMMAND == PCommand.MULTI_FLAG_ALL_LEVEL) {
@@ -42,6 +44,7 @@ public class Encoder extends JobHandler {
                 message.what = 111;
                 handler.sendMessage(message);
             }
+
         }
     }
 
