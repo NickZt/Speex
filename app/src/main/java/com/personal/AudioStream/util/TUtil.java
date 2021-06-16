@@ -179,7 +179,7 @@ public final class TUtil {
     }
 
     /**
-     * 取消吐司显示
+     * cancel吐司显示
      */
     public static void cancel() {
         if (sToast != null) {

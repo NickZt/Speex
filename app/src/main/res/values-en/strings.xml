@@ -2,22 +2,22 @@
     <string name="app_name">Speex</string>
     <!--首页功能模块数组-->
     <string-array name="home_function_names">
-        <item>监控</item>
-        <item>车辆列表</item>
-        <item>超速报警</item>
+        <item>monitor</item>
+        <item>Vehicle list</item>
+        <item>Speeding alarm</item>
         <item>餐饮</item>
         <item>配件</item>
         <item>数据报表</item>
     </string-array>
 
     <!--界面标题-->
-    <string name="tv_title_home">八方智控</string>
+    <string name="tv_title_home">Bafang Intelligent Control</string>
     <string name="tv_title_food">餐饮</string>
-    <string name="tv_title_monitor">监控</string>
-    <string name="tv_title_speed">超速报警</string>
+    <string name="tv_title_monitor">monitor</string>
+    <string name="tv_title_speed">Speeding alarm</string>
     <string name="tv_title_parts">配件</string>
     <string name="tv_title_data_forms">数据报表</string>
-    <string name="tv_title_car_list">车辆列表</string>
+    <string name="tv_title_car_list">Vehicle list</string>
 
     <!--用户-->
     <string name="tv_user">用户</string>
@@ -31,7 +31,7 @@
 
     <!--登录相关-->
     <string name="user_login">用户初始化</string>
-    <string name="group_name">组名</string>
+    <string name="group_name">group name</string>
     <string name="user_name">username(最多7位)</string>
     <string name="user_name_error">username错误</string>
     <string name="user_password">密码</string>

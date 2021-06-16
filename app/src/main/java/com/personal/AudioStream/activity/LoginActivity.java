@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, TallBackActivity.class));
                 finish();
             }else {
-                TUtil.showLong("请开启网络");
+                TUtil.showLong("Please turn on the network");
                 group_name_tv.setText(groupName);
                 user_name_et.setText(userName);
             }
@@ -79,12 +79,12 @@ public class LoginActivity extends AppCompatActivity {
                 //String groupNameTri = group_name_et.getText().toString().trim();
                 String groupNameTri = group_name_tv.getText().toString().trim();
                 if (TextUtils.isEmpty(groupNameTri)) {
-                    Toast.makeText(LoginActivity.this, "组名不能为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Group name cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String userNameTri = user_name_et.getText().toString().trim();
                 if (TextUtils.isEmpty(userNameTri)) {
-                    Toast.makeText(LoginActivity.this, "用户名不能为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Username can not be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 SPUtil.getInstance().put(SPConsts.GROUP_NAME, groupNameTri);
@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(new Intent(LoginActivity.this, TallBackActivity.class));
                     finish();
                 }else {
-                    TUtil.showLong("请开启网络");
+                    TUtil.showLong("Please turn on the network");
                 }
             }
         });
@@ -119,13 +119,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void accept(Permission permission) throws Exception {
                         if (permission.granted) {
-                            // 用户已经同意该权限
+                            // The user has agreed to the permission
                             Log.e("permission", permission.name + " is granted.");
                         } else if (permission.shouldShowRequestPermissionRationale) {
                             // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
                             Log.e("permission", permission.name + " is denied. More info should be provided.");
                         } else {
-                            // 用户拒绝了该权限，并且选中『不再询问』
+                            // The user denied the permission and checked "Don't ask again"
                             Log.e("permission", permission.name + " is denied.");
                         }
                     }
@@ -134,10 +134,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void dialogList() {
-        final String items[] = {"A组", "B组", "C组", "D组", "E组", "F组", "G组", "H组"};
+        final String items[] = {"Group A", "Group B", "C组", "D组", "E组", "F组", "G组", "H组"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this,3);
-        builder.setTitle("请选择分组：");
+        builder.setTitle("Please select a group：");
         // builder.setMessage("是否确认退出?"); //设置内容
         builder.setIcon(R.mipmap.ic_launcher);
         // 设置列表显示，注意设置了列表显示就不要设置builder.setMessage()了，否则列表不起作用。
@@ -148,14 +148,14 @@ public class LoginActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("determine", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 group_name_tv.setText(items[which]);
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

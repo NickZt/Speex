@@ -38,7 +38,7 @@ public class ExampleUnitTest {
         System.out.print(Arrays.toString(start));
         System.out.print(Arrays.toString(end));
 
-        byte[] encodedData ="A组".getBytes(Charset.forName("UTF-8"));
+        byte[] encodedData ="Group A".getBytes(Charset.forName("UTF-8"));
         byte[] encodedData2 ="组".getBytes(Charset.forName("UTF-8"));
         System.out.println("sssssss"+Arrays.toString(encodedData));
         System.out.println("sssssss"+Arrays.toString(encodedData2));

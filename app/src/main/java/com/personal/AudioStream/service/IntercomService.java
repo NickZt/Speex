@@ -181,7 +181,7 @@ public class IntercomService extends Service {
     private void initData() {
         // 初始化探测线程
         signInAndOutReq = new SignInAndOutReq(handler);
-        //规则：命令+组名+用户名（&隔开）
+        //规则：命令+group name+username（&隔开）
         signInAndOutReq.setCommand(PCommand.getDiscoverCommand());
         // 启动探测局域网内其余用户的线程（每分钟扫描一次）
         discoverService.scheduleAtFixedRate(signInAndOutReq, 0, 10, TimeUnit.SECONDS);

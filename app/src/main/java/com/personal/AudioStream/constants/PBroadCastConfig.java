@@ -39,10 +39,10 @@ public class PBroadCastConfig {
         String string = SPUtil.getInstance().getString(SPConsts.GROUP_NAME, "");
         String result = MULTI_BROADCAST_IP;
         switch (string) {
-            case "A组":
+            case "Group A":
                 result =  MULTI_BROADCAST_IP_A;
                 break;
-            case "B组":
+            case "Group B":
                 result =  MULTI_BROADCAST_IP_B;
                 break;
             case "C组":

@@ -24,7 +24,7 @@ public class InfoBean {
     private String deviceName;
 
     /**
-     * 发送用户名称
+     * 发送username称
      */
     private String senderName;
 
@@ -34,7 +34,7 @@ public class InfoBean {
     private String senderLevel;
 
     /**
-     * 发送用户的组名
+     * 发送用户的group name
      */
     private String groupName;
 

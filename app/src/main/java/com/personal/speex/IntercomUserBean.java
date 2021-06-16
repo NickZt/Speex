@@ -6,13 +6,13 @@ import android.os.Parcelable;
 
 public class IntercomUserBean implements Parcelable {
 
-    //IP地址,需要接收者的ip
+    //IPAddress, the recipient'sip
     private String ipAddress;
 
-    //用户名
+    //username
     private String userName;
 
-    //组名
+    //group name
     private String groupName;
 
     /**

@@ -45,7 +45,7 @@ import static android.provider.Telephony.MmsSms.PendingMessages.ERROR_TYPE;
  *                  后面四个可能不需要了暂时：3是否显示计时；4是否自动删除文件；5是否自动上传文件；6是否暂停继续；
  *             二 ：文件：1设置保存文件路径及名称；2保存文件；3获取当前保存文件路径；4删除文件；5保存成wmv格式的文件
  *             三 : 录音：1录音暂停（只有保存到本地的时候才有录音暂停及拼接）；2录音开始；3录音停止；4录音音频大小；
- *                        5录音长度；6录音创建及结束时间；7录音的创建人；8录音计时；9录音发送(因为是实时的，所以暂不支持录音取消发送功能)；
+ *                        5录音长度；6录音创建及结束时间；7录音的创建人；8录音计时；9录音发送(因为是实时的，所以暂不支持录音cancel发送功能)；
  *                        10录音状态；11录音音量；
  */
 public class Recorder extends JobHandler {
@@ -106,7 +106,7 @@ public class Recorder extends JobHandler {
     }
 
     /**
-     * 调用该方法：则使用默认设置的AudioRecord进行录音,并创建根据 <用户名+时间戳> 或 <时间戳> 的形式命名PCM频源的文件
+     * 调用该方法：则使用默认设置的AudioRecord进行录音,并创建根据 <username+时间戳> 或 <时间戳> 的形式命名PCM频源的文件
      *
      * @param audioCallBack 扩展用的接口回调
      * @return 1表示初始化成功；0表示初始化失败
@@ -121,7 +121,7 @@ public class Recorder extends JobHandler {
     }
 
     /**
-     * 调用该方法：则使用用户定义的AudioRecord进行录音,并创建根据 <用户名+年月日时分秒> 或 <时间戳> 的形式命名PCM音频源的文件
+     * 调用该方法：则使用用户定义的AudioRecord进行录音,并创建根据 <username+年月日时分秒> 或 <时间戳> 的形式命名PCM音频源的文件
      *
      * @param audioCallBack     扩展用的接口回调
      * @param audioRecord       使用自定义的AudioRecord进行录音

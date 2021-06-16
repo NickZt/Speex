@@ -16,7 +16,7 @@
         android:layout_marginBottom="@dimen/activity_margin5"
         android:textSize="@dimen/activity_text_size14"
         android:textColor="#49494d"
-        tools:text="用户名"/>
+        tools:text="username"/>
     <TextView
         android:id="@+id/tv_ip"
         android:layout_width="wrap_content"

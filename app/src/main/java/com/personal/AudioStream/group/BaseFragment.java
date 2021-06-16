@@ -49,7 +49,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     /**
      *
      * @param userBean
-     * @return  剩余的用户数量为0时则返回 STATUS (即：组名)
+     * @return  剩余的用户数量为0时则返回 STATUS (即：group name)
      */
     public abstract String removeExistUser(IntercomUserBean userBean);
 
