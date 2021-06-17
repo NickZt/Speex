@@ -22,6 +22,7 @@ public class SpeexUtil {
      * 6 : 11kpbs (artifacts usually only noticeable with headphones)
      * 8 : 15kbps (artifacts not usually noticeable)
      */
+//    todo change this magic number and calc to length buffer
     public static final int DEFAULT_COMPRESSION = 5;
     private static volatile SpeexUtil INSTANCE = null;
 
@@ -30,7 +31,7 @@ public class SpeexUtil {
     }
 
     /**
-     *单例初始化
+     *单例 Related
      * @return  返回SpeexUtil对象
      */
     public static SpeexUtil init() {
@@ -45,8 +46,8 @@ public class SpeexUtil {
     }
 
     /**
-     *关闭编码并且释放SpeexUtil
-     * @return -1表示默认值INSTACE为空，0表示没有开启过，1表示关闭释放
+     *Turn off encoding and release SpeexUtil
+     * @return -1 Indicates that the default value INSTANCE is empty, 0 means that it has not been opened, 1 means that it is closed and released
      */
     public static int free(){
         int flag = -1;

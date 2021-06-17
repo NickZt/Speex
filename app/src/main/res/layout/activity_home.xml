@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <!--更换为轮播图控件-->
+            <!--Change to carousel control-->
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/activity_margin200"
@@ -28,7 +28,7 @@
                 android:layout_height="@dimen/activity_margin30"
                 android:background="@color/border_bg_white"/>
 
-            <!--使用列表更加方便保证扩展性-->
+            <!--It is more convenient to use the list to ensure scalability-->
             <GridView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

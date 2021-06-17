@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Speex</string>
+    <!--首页功能模块数组-->
+    <string-array name="home_function_names">
+        <item>监控</item>
+        <item>车辆列表</item>
+        <item>超速报警</item>
+        <item>餐饮</item>
+        <item>配件</item>
+        <item>数据报表</item>
+    </string-array>
+
+    <!--界面 title -->
+    <string name="tv_title_home">八方智控</string>
+    <string name="tv_title_food">餐饮</string>
+    <string name="tv_title_monitor">监控</string>
+    <string name="tv_title_speed">超速报警</string>
+    <string name="tv_title_parts">配件</string>
+    <string name="tv_title_data_forms">数据报表</string>
+    <string name="tv_title_car_list">车辆列表</string>
+
+    <!--group name-->
+    <string name="tv_user">用户</string>
+    <string name="tv_login">登录</string>
+    <string name="tv_user_login">用户登录</string>
+    <string name="tv_user_password">密码</string>
+    <string name="tv_remember_password">记住密码</string>
+
+    <!--按钮-->
+    <string name="btn_save">保存</string>
+
+    <!--log in相关-->
+    <string name="user_login">用户初始化</string>
+    <string name="group_name">组名</string>
+    <string name="user_name">username(最多7位)</string>
+    <string name="user_name_error">username错误</string>
+    <string name="user_password">密码</string>
+    <string name="user_password_error">密码错误</string>
+    <string name="user_remember_pwd">记住密码</string>
+    <string name="user_code">验证码</string>
+    <string name="user_get_num_code">9393</string>
+    <string name="curr_ip">当前IPaddress为：</string>
+    <string name="stop_searching">停止 search for </string>
+    <string name="start_search">开始 search for </string>
+    <string name="online">上线</string>
+    <string name="offline">下线</string>
+</resources>

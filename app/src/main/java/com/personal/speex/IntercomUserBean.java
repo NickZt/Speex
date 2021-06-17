@@ -16,16 +16,16 @@ public class IntercomUserBean implements Parcelable {
     private String groupName;
 
     /**
-     * 状态：原本是用户是否在线的状态，现在改为命令
+     * 状态：原本是group name是否在线的状态，现在改为命令
      * 10：请求    命令
      * 11：相应    命令
      * 12：离开    命令
      * 13：开始语音      命令
-     * 14：结束语音     命令
+     * 14：the end语音     命令
      */
     private int statusOnline;
 
-    //级别:4 全部 ；3组内；2个人；1搜索
+    // level: 4 All; within 3 groups; 2 individuals; 1 search for
     private int audioLevel;
 
 

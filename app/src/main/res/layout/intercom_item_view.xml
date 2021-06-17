@@ -8,6 +8,6 @@
         android:id="@+id/intercom_user_name_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="我"
+        android:text="I"
         android:textSize="15dp" />
 </LinearLayout>

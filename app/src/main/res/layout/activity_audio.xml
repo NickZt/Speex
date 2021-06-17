@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="当前IP地址为："
+            android:text="@string/curr_ip"
             android:textSize="15sp"/>
 
         <TextView
@@ -34,25 +34,25 @@
             android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开始搜索"
+            android:text="@string/start_search"
             />
         <Button
             android:id="@+id/stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="停止搜索"
+            android:text="@string/stop_searching"
             />
         <Button
             android:id="@+id/online"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="上线"
+            android:text="@string/online"
             />
         <Button
             android:id="@+id/offline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="下线"
+            android:text="@string/offline"
             />
 
     </LinearLayout>
@@ -65,33 +65,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/start_record_btn"
-            android:text="单发录音"/>
+            android:text="Single-shot recording"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/stop_record_btn"
-            android:text="停止录音"/>
+            android:text="Stop recording"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/play_video_btn"
-            android:text="群发录音"/>
+            android:text="Group recording"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/stop_video_btn"
-            android:text="停止播放录音"/>
+            android:text="Stop playing recording"/>
     </LinearLayout>
     <TextView
         android:id="@+id/activity_audio_local_network_user_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="当前局域网的对讲机用户："
+        android:text="Intercom for current LAN group name："
         android:layout_below="@+id/record_ll"
         android:textSize="15sp" />
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_audio_local_network_user_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -99,6 +99,6 @@
         android:layout_marginTop="10dp"
         app:layoutManager="LinearLayoutManager">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </RelativeLayout>

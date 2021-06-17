@@ -1,7 +1,7 @@
 package com.personal.searchdevices22;
 
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +23,7 @@ public class Main2Activity extends AppCompatActivity {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(android.os.Message msg) {
-            //这个是发送过来的消息
+            //This is the message from the send
             if (mDeviceList != null) {
                 show1.setText(mDeviceList.toString());
             }
@@ -50,10 +50,10 @@ public class Main2Activity extends AppCompatActivity {
 
 
         private void initData() {
-            new WaitSearch22Thread(this, "日灯光", "客厅") {
+            new WaitSearch22Thread(this, "Daylight", "living room") {
                 @Override
                 public void onDeviceSearched(InetSocketAddress socketAddr) {
-                    pushMsgToMain("已上线，搜索主机：" + socketAddr.getAddress().getHostAddress() + ":" + socketAddr.getPort());
+                    pushMsgToMain("Already online ， search for Host：" + socketAddr.getAddress().getHostAddress() + ":" + socketAddr.getPort());
                 }
             }.start();
         }
@@ -63,16 +63,16 @@ public class Main2Activity extends AppCompatActivity {
             new Search22Thread() {
                 @Override
                 public void onSearchStart() {
-                    startSearch(); // 主要用于在UI上展示正在搜索
+                    startSearch(); // 主要用于在UI上展示正在 search for
                 }
 
                 @Override
                 public void onSearchFinish(Set deviceSet) {
-                    endSearch(); // 结束UI上的正在搜索
+                    endSearch(); // End of the UI on the search for
                     mDeviceList.clear();
                     mDeviceList.addAll(deviceSet);
 
-                    mHandler.sendEmptyMessage(0); // 在UI上更新设备列表
+                    mHandler.sendEmptyMessage(0); // 在UI上更新equipment列表
                 }
             }.start();
         }

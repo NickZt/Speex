@@ -20,11 +20,11 @@ public abstract class Search22Thread extends Thread {
 
     private static final int DEVICE_FIND_PORT = 9000;//固定接收端口号
     private static final int RECEIVE_TIME_OUT = 1500; // 接收超时时间
-    private static final int RESPONSE_DEVICE_MAX = 200; // 响应设备的最大个数，防止UDP广播攻击
+    private static final int RESPONSE_DEVICE_MAX = 200; // 响应equipment的最大个数，防止UDP广播攻击
 
-    private static final byte PACKET_TYPE_FIND_DEVICE_REQ_10 = 0x10; // 搜索请求
-    private static final byte PACKET_TYPE_FIND_DEVICE_RSP_11 = 0x11; // 搜索响应
-    private static final byte PACKET_TYPE_FIND_DEVICE_CHK_12 = 0x12; // 搜索确认
+    private static final byte PACKET_TYPE_FIND_DEVICE_REQ_10 = 0x10; //  search for 请求
+    private static final byte PACKET_TYPE_FIND_DEVICE_RSP_11 = 0x11; //  search for 响应
+    private static final byte PACKET_TYPE_FIND_DEVICE_CHK_12 = 0x12; //  search for 确认
 
     private static final byte PACKET_DATA_TYPE_DEVICE_NAME_20 = 0x20;
     private static final byte PACKET_DATA_TYPE_DEVICE_ROOM_21 = 0x21;
@@ -52,7 +52,7 @@ public abstract class Search22Thread extends Thread {
             DatagramPacket sendPack = new DatagramPacket(sendData, sendData.length, broadIP, DEVICE_FIND_PORT);
 
             for (int i = 0; i < 3; i++) {
-                // 发送搜索广播
+                //  send  search for 广播
                 mPackType = PACKET_TYPE_FIND_DEVICE_REQ_10;
                 sendPack.setData(packData(i + 1));
                 hostSocket.send(sendPack);
@@ -69,8 +69,8 @@ public abstract class Search22Thread extends Thread {
                         if (recePack.getLength() > 0) {
                             mDeviceIP = recePack.getAddress().getHostAddress();
                             if (parsePack(recePack)) {
-                                Log.i(TAG, "@@@zjun: 设备上线：" + mDeviceIP);
-                                // 发送一对一的确认信息。使用接收报，因为接收报中有对方的实际IP，发送报时广播IP
+                                Log.i(TAG, "@@@zjun: equipment online ：" + mDeviceIP);
+                                //  send 一对一的确认信息。使用接收报，因为接收报中有对方的实际IP， send 报时广播IP
                                 mPackType = PACKET_TYPE_FIND_DEVICE_CHK_12;
                                 recePack.setData(packData(rspCount)); // 注意：设置数据的同时，把recePack.getLength()也改变了
                                 hostSocket.send(recePack);
@@ -79,7 +79,7 @@ public abstract class Search22Thread extends Thread {
                     }
                 } catch (SocketTimeoutException e) {
                 }
-                Log.i(TAG, "@@@zjun: 结束搜索" + i);
+                Log.i(TAG, "@@@zjun: the end search for " + i);
             }
             onSearchFinish(mDeviceSet);
         } catch (IOException e) {
@@ -95,13 +95,13 @@ public abstract class Search22Thread extends Thread {
     }
 
     /**
-     * 搜索开始时执行
+     *  search for Execute at the beginning
      */
     public abstract void onSearchStart();
 
     /**
-     * 搜索结束后执行
-     * @param deviceSet 搜索到的设备集合
+     *  search for the end后执行
+     * @param deviceSet  search for 到的equipment集合
      */
     public abstract void onSearchFinish(Set deviceSet);
 
@@ -181,11 +181,11 @@ public abstract class Search22Thread extends Thread {
     }
 
     /**
-     * 打包搜索报文
+     * 打包 search for 报文
      * 协议：$ + packType(1) + sendSeq(4) + [deviceIP(n<=15)]
      *  packType - 报文类型
-     *  sendSeq - 发送序列
-     *  deviceIP - 设备IP，仅确认时携带
+     *  sendSeq -  send 序列
+     *  deviceIP - equipmentIP，仅确认时携带
      */
     private byte[] packData(int seq) {
         byte[] data = new byte[1024];
@@ -214,14 +214,14 @@ public abstract class Search22Thread extends Thread {
 
 
     /**
-     * 设备Bean
-     * 只要IP一样，则认为是同一个设备
+     * equipmentBean
+     * 只要IP一样，则认为是同一个equipment
      */
     public static class DeviceBean{
-        String ip;      // IP地址
+        String ip;      // IPaddress
         int port;       // 端口
-        String name;    // 设备名称
-        String room;    // 设备所在房间
+        String name;    // equipmentname
+        String room;    // equipment所在房间
 
         @Override
         public int hashCode() {

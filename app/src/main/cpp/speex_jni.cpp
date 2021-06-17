@@ -5,10 +5,10 @@
 
 
 /*
-    在C语言中标准输出的方法是printf，但是打印出来的内容在logcat看不到，需要使用
-    __android_log_print()方法打印log，才能在logcat看到，由于该方法名比较长，我们在
-    这里需要定义宏，使得在C语言中能够向Android一样打印log。
-    注意：该方法还需要在gradle中声明ldLibs "log"，详见build.gradle
+    In C language, the standard output method is printf, but the printed content cannot be seen in logcat, so you need to use it
+     The __android_log_print() method prints log before it can be seen in logcat. Because the method name is relatively long, we are
+     Here you need to define a macro so that the log can be printed in the C language like Android.
+     Note: This method also needs to declare ldLibs "log" in gradle, see build.gradle for details
 */
 #include <android/log.h>
 #include <speex/speex_bits.h>
@@ -22,7 +22,7 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,TAG ,__VA_ARGS__) // LOGE
 #define LOGF(...) __android_log_print(ANDROID_LOG_FATAL,TAG ,__VA_ARGS__) // LOGF
 
-/* 只有返回1的时候表明走了程序，大于1的情况表明正在运行，为0表明结束或未开始 */
+/* 只有返回1的时候表明走了程序，大于1的情况表明正在运行，为0表明the end或未开始 */
 static int codec_open = 0;
 
 static int dec_frame_size;
@@ -48,14 +48,14 @@ Java_com_personal_speex_SpeexUtil_open(
     if (codec_open++ != 0)
         return (jint)0;
 
-    // 初始化SpeexBits数据结构
+    //  Related SpeexBits数据结构
     speex_bits_init(&ebits);
     speex_bits_init(&dbits);
     /*
      * speex_nb_mode:窄带模式
      * speex_wb_mode:宽带模式
      * speex_uwb_mode:超宽带模式
-     // 设置编码为窄带编码,初始化编码器
+     // 设置编码为窄带编码, Related 编码器
      */
     enc_state = speex_encoder_init(&speex_nb_mode);
     dec_state = speex_decoder_init(&speex_nb_mode);
@@ -106,7 +106,7 @@ Java_com_personal_speex_SpeexUtil_encode(
          return 0;
 
      for (i = 0; i < nSamples; i++) {
-         // 从Java中拷贝数据到C中，每次拷贝enc_frame_size = 160个short
+         // Copy data from Java to C，每次拷贝enc_frame_size = 160个short
          env->GetShortArrayRegion(lin, i*enc_frame_size, enc_frame_size, buffer);
          // 降噪、增益、静音检测等处理
          *//*speex_preprocess_run(preprocess_state, buffer);*//*
@@ -129,7 +129,7 @@ Java_com_personal_speex_SpeexUtil_encode(
     if (!codec_open)
         return 0;
 
-    // 从Java中拷贝数据到C中，每次拷贝enc_frame_size = 160个short
+    // Copy data from Java to C，每次拷贝enc_frame_size = 160个short
     env->GetShortArrayRegion(lin, offset, enc_frame_size, buffer);
     // 降噪、增益、静音检测等处理
     // speex_preprocess_run(preprocess_state, buffer);
@@ -141,7 +141,7 @@ Java_com_personal_speex_SpeexUtil_encode(
     // 将C层的char类型数据写入Java层的字节数组中，开始写入index为0，本次写入tot_bytes
     env->SetByteArrayRegion(encoded, 0, tot_bytes, output_buffer);
     /*for (i = 0; i < nsamples; i++) {
-        // 从Java中拷贝数据到C中，每次拷贝enc_frame_size = 160个short
+        // Copy data from Java to C，每次拷贝enc_frame_size = 160个short
         env->GetShortArrayRegion(lin, offset + i*enc_frame_size, enc_frame_size, buffer);
         // 降噪、增益、静音检测等处理
        // speex_preprocess_run(preprocess_state, buffer);
@@ -175,7 +175,7 @@ Java_com_personal_speex_SpeexUtil_decode(
      if (!codec_open)
          return 0;
      for(i = 0; i < nSamples; i++) {
-         // 从Java中拷贝数据到C中，size = 28个字节
+         // Copy data from Java to C，size = 28个字节
          env->GetByteArrayRegion(encoded, i * size, size, buffer);
          // 编码数据到dbits中
          speex_bits_read_from(&dbits, (char *)buffer, size);
@@ -203,7 +203,7 @@ Java_com_personal_speex_SpeexUtil_decode(
     for (int i = 0; i < nSamples; i++)
     {
         LOGD("########## buffer = %c", buffer[i]);
-        // 从Java中拷贝数据到C中，size = 28个字节
+        // Copy data from Java to C，size = 28个字节
         env->GetByteArrayRegion(encoded, i * size, size, buffer);
         // 编码数据到dbits中
         speex_bits_read_from(&dbits, (char *)buffer, size);

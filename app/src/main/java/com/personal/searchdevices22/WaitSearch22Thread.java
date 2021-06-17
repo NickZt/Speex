@@ -20,12 +20,12 @@ public abstract class WaitSearch22Thread extends Thread{
     private final String TAG = WaitSearch22Thread.class.getSimpleName();
 
     private static final int DEVICE_FIND_PORT = 9000;
-    private static final int RECEIVE_TIME_OUT = 1500; // 接收超时时间，应小于等于主机的超时时间1500
-    private static final int RESPONSE_DEVICE_MAX = 200; // 响应设备的最大个数，防止UDP广播攻击
+    private static final int RECEIVE_TIME_OUT = 1500; // 接收超时时间，应小于等于Host的超时时间1500
+    private static final int RESPONSE_DEVICE_MAX = 200; // 响应equipment的最大个数，防止UDP广播攻击
 
-    private static final byte PACKET_TYPE_FIND_DEVICE_REQ_10 = 0x10; // 搜索请求
-    private static final byte PACKET_TYPE_FIND_DEVICE_RSP_11 = 0x11; // 搜索响应
-    private static final byte PACKET_TYPE_FIND_DEVICE_CHK_12 = 0x12; // 搜索确认
+    private static final byte PACKET_TYPE_FIND_DEVICE_REQ_10 = 0x10; //  search for 请求
+    private static final byte PACKET_TYPE_FIND_DEVICE_RSP_11 = 0x11; //  search for 响应
+    private static final byte PACKET_TYPE_FIND_DEVICE_CHK_12 = 0x12; //  search for 确认
 
     private static final byte PACKET_DATA_TYPE_DEVICE_NAME_20 = 0x20;
     private static final byte PACKET_DATA_TYPE_DEVICE_ROOM_21 = 0x21;
@@ -47,14 +47,14 @@ public abstract class WaitSearch22Thread extends Thread{
             byte[] data = new byte[1024];
             DatagramPacket pack = new DatagramPacket(data, data.length);
             while (true) {
-                // 等待主机的搜索
+                // 等待Host的 search for
                 socket.receive(pack);
                 if (verifySearchData(pack)) {
                     byte[] sendData = packData();
                     DatagramPacket sendPack = new DatagramPacket(sendData, sendData.length, pack.getAddress(), pack.getPort());
-                    Log.i(TAG, "@@@zjun: 给主机回复信息");
+                    Log.i(TAG, "@@@zjun: 给Host回复信息");
                     socket.send(sendPack);
-                    Log.i(TAG, "@@@zjun: 等待主机接收确认");
+                    Log.i(TAG, "@@@zjun: 等待Host接收确认");
                     socket.setSoTimeout(RECEIVE_TIME_OUT);
                     try {
                         socket.receive(pack);
@@ -78,7 +78,7 @@ public abstract class WaitSearch22Thread extends Thread{
     }
 
     /**
-     * 当设备被发现时执行
+     * 当equipment被发现时执行
      */
     public abstract void onDeviceSearched(InetSocketAddress socketAddr);
 
@@ -124,10 +124,10 @@ public abstract class WaitSearch22Thread extends Thread{
     }
 
     /**
-     * 校验搜索数据
+     * 校验 search for 数据
      * 协议：$ + packType(1) + sendSeq(4)
      *  packType - 报文类型
-     *  sendSeq - 发送序列
+     *  sendSeq -  send 序列
      */
     private boolean verifySearchData(DatagramPacket pack) {
         if (pack.getLength() != 6) {
@@ -151,8 +151,8 @@ public abstract class WaitSearch22Thread extends Thread{
      * 校验确认数据
      * 协议：$ + packType(1) + sendSeq(4) + deviceIP(n<=15)
      *  packType - 报文类型
-     *  sendSeq - 发送序列
-     *  deviceIP - 设备IP，仅确认时携带
+     *  sendSeq -  send 序列
+     *  deviceIP - equipmentIP，仅确认时携带
      */
     private boolean verifyCheckData(DatagramPacket pack) {
         if (pack.getLength() < 6) {

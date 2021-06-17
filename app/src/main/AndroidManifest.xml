@@ -32,22 +32,22 @@
         android:theme="@style/AppTheme"
         tools:ignore="HardcodedDebugMode">
 
-        <activity android:name="com.personal.AudioStream.activity.LoginActivity">
+        <activity android:name="com.personal.audiostream.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.personal.AudioStream.service.IntercomService" />
+        <service android:name="com.personal.audiostream.service.IntercomService" />
 
-        <receiver android:name="com.personal.AudioStream.broadcast.AutoStartBroadCastReceiver">
+        <receiver android:name="com.personal.audiostream.broadcast.AutoStartBroadCastReceiver">
                 <intent-filter>
                     <action android:name="android.intent.action.BOOT_COMPLETED"></action>
                     <category android:name="android.intent.category.LAUNCHER" />
                 </intent-filter>
         </receiver>
-        <activity android:name="com.personal.AudioStream.group.TallBackActivity"></activity>
+        <activity android:name="com.personal.audiostream.group.TallBackActivity"></activity>
     </application>
 
 </manifest>
